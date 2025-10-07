@@ -1,0 +1,50 @@
+{% extends 'inventario/base.html' %}
+
+
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <div class="header">
+        <h1>Dashboard de Inventario</h1>
+        <div class="user-info">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=3498db&color=fff" alt="Usuario">
+            <span>Administrador</span>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+        <div class="card total-products">
+            <h3>Total de Productos</h3>
+            <div class="value">1,248</div>
+            <div class="trend">+5% desde el mes pasado</div>
+        </div>
+        <div class="card low-stock">
+            <h3>Productos con Stock Bajo</h3>
+            <div class="value">42</div>
+            <div class="trend">Necesitan reabastecimiento</div>
+        </div>
+        <div class="card out-of-stock">
+            <h3>Productos Agotados</h3>
+            <div class="value">18</div>
+            <div class="trend">Urgente reabastecer</div>
+        </div>
+        <div class="card total-value">
+            <h3>Valor Total del Inventario</h3>
+            <div class="value">$245,680</div>
+            <div class="trend">+2.3% desde el mes pasado</div>
+        </div>
+    </div>
+
+    <!-- Bloque que las demás páginas pueden reemplazar -->
+   
+        
+        <!-- Si no hay otra plantilla, aquí puedes mostrar algo por defecto -->
+        <p>Bienvenido al sistema de inventario.</p>
+        {% include 'dashboard/producto.html' %}
+        
+    
+    
+</div>
+{% endblock %}

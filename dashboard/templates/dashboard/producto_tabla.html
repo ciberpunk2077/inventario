@@ -1,0 +1,159 @@
+
+
+<!-- Actions Bar -->
+<div class="actions-bar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar productos...">
+    </div>
+    <div class="actions-buttons">
+        <button class="btn btn-primary" id="addProductBtn">
+            <i class="fas fa-plus"></i> Agregar Producto
+        </button>
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#PRD-001</td>
+                <td>Laptop Dell XPS 13</td>
+                <td>Electrónicos</td>
+                <td>$1,299.99</td>
+                <td>24</td>
+                <td><span class="status in-stock">En Stock</span></td>
+                <td class="actions">
+                    <button class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#PRD-002</td>
+                <td>Mouse Inalámbrico Logitech</td>
+                <td>Accesorios</td>
+                <td>$49.99</td>
+                <td>5</td>
+                <td><span class="status low-stock">Stock Bajo</span></td>
+                <td class="actions">
+                    <button class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#PRD-003</td>
+                <td>Monitor Samsung 24"</td>
+                <td>Electrónicos</td>
+                <td>$189.99</td>
+                <td>0</td>
+                <td><span class="status out-of-stock">Agotado</span></td>
+                <td class="actions">
+                    <button class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#PRD-004</td>
+                <td>Teclado Mecánico RGB</td>
+                <td>Accesorios</td>
+                <td>$79.99</td>
+                <td>32</td>
+                <td><span class="status in-stock">En Stock</span></td>
+                <td class="actions">
+                    <button class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#PRD-005</td>
+                <td>Disco Duro Externo 1TB</td>
+                <td>Almacenamiento</td>
+                <td>$59.99</td>
+                <td>8</td>
+                <td><span class="status low-stock">Stock Bajo</span></td>
+                <td class="actions">
+                    <button class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal" id="addProductModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Agregar Nuevo Producto</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <form id="productForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productName">Nombre del Producto</label>
+                    <input type="text" id="productName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="productSKU">SKU</label>
+                    <input type="text" id="productSKU" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productCategory">Categoría</label>
+                    <select id="productCategory" class="form-control" required>
+                        <option value="">Seleccionar categoría</option>
+                        <option value="electronics">Electrónicos</option>
+                        <option value="accessories">Accesorios</option>
+                        <option value="storage">Almacenamiento</option>
+                        <option value="networking">Redes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productSupplier">Proveedor</label>
+                    <select id="productSupplier" class="form-control" required>
+                        <option value="">Seleccionar proveedor</option>
+                        <option value="dell">Dell</option>
+                        <option value="logitech">Logitech</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="wd">Western Digital</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productPrice">Precio</label>
+                    <input type="number" id="productPrice" class="form-control" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="productStock">Stock Inicial</label>
+                    <input type="number" id="productStock" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="productDescription">Descripción</label>
+                <textarea id="productDescription" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel close-modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Guardar Producto</button>
+            </div>
+        </form>
+    </div>
+</div>
