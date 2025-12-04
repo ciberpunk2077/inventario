@@ -35,7 +35,7 @@ class Proveedor(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
-    imagen = models.ImageField(upload_to='proveedor/', blank=True, null=True)
+    imagen = models.ImageField(upload_to='proveedores/', blank=True, null=True)
     fecha_registro = models.DateTimeField(default=timezone.now)
     activo = models.BooleanField(default=True)
 
@@ -45,6 +45,26 @@ class Proveedor(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    # 🔥 ELIMINAR ARCHIVO AL BORRAR REGISTRO
+    def delete(self, *args, **kwargs):
+        if self.imagen:
+            self.imagen.delete(save=False)
+        super().delete(*args, **kwargs)
+
+    # 🌀 ELIMINAR ARCHIVO VIEJO AL ACTUALIZAR
+    def save(self, *args, **kwargs):
+        try:
+            proveedor_ant = Proveedor.objects.get(pk=self.pk)
+            if proveedor_ant.imagen and proveedor_ant.imagen != self.imagen:
+                proveedor_ant.imagen.delete(save=False)
+        except Proveedor.DoesNotExist:
+            pass
+
+        super().save(*args, **kwargs)
+
+    
+    
 
 
 class Marca(models.Model):
@@ -60,6 +80,24 @@ class Marca(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+     # 🔥 ELIMINAR ARCHIVO AL BORRAR REGISTRO
+    
+    def delete(self, *args, **kwargs):
+        if self.logo:
+            self.logo.delete(save=False)
+        super().delete(*args, **kwargs)
+
+    # 🌀 ELIMINAR ARCHIVO VIEJO AL ACTUALIZAR
+    def save(self, *args, **kwargs):
+        try:
+            marca_antigua = Marca.objects.get(pk=self.pk)
+            if marca_antigua.logo and marca_antigua.logo != self.logo:
+                marca_antigua.logo.delete(save=False)
+        except Marca.DoesNotExist:
+            pass
+
+        super().save(*args, **kwargs)
 
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)

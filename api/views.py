@@ -24,13 +24,6 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
 
 
-# ------------------------------
-# Proveedor
-# ------------------------------
-class ProveedorViewSet(viewsets.ModelViewSet):
-    queryset = Proveedor.objects.all()
-    serializer_class = ProveedorSerializer
-    parser_classes = (MultiPartParser, FormParser)
 
 
 # ------------------------------
@@ -175,3 +168,22 @@ class MarcaViewSet(viewsets.ModelViewSet):
     queryset = Marca.objects.all()
     serializer_class = MarcaSerializer
     parser_classes = [MultiPartParser, FormParser]
+
+
+# ------------------------------
+# Proveedor
+# ------------------------------
+class ProveedorViewSet(viewsets.ModelViewSet):
+    queryset = Proveedor.objects.all()
+    serializer_class = ProveedorSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def destroy(self, request, *args, **kwargs):
+        proveedor = self.get_object()
+        
+        # borrar imagen si existe
+        if proveedor.imagen:
+            proveedor.imagen.delete(save=False)
+
+        proveedor.delete()
+        return Response({"message": "Proveedor eliminado"}, status=200)
