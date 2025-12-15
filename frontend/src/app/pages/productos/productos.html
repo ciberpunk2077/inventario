@@ -1,0 +1,250 @@
+<div class="w-full min-h-screen bg-gray-100">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between bg-white shadow px-8 py-5">
+        <h1 class="text-3xl font-bold text-gray-800">Dashboard de Inventario</h1>
+
+        <div class="flex items-center gap-3">
+            <img src="assets/foto.png" class="w-10 h-10 rounded-full object-cover border" />
+            <span class="font-semibold text-gray-700">Administrador</span>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-8">
+        <div class="bg-white shadow rounded-xl p-6 border-l-4 border-blue-500">
+            <h3 class="text-gray-500 text-sm">Total de Productos</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ totalProductos }}</p>
+            <p class="text-green-500 text-sm mt-1">{{ totalPiezas }} piezas en inventario</p>
+        </div>
+
+        <div class="bg-white shadow rounded-xl p-6 border-l-4 border-yellow-500">
+            <h3 class="text-gray-500 text-sm">Stock Bajo</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-1">42</p>
+            <p class="text-yellow-600 text-sm mt-1">Necesitan reabastecimiento</p>
+        </div>
+
+        <div class="bg-white shadow rounded-xl p-6 border-l-4 border-red-500">
+            <h3 class="text-gray-500 text-sm">Agotados</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-1">18</p>
+            <p class="text-red-600 text-sm mt-1">Urgente reabastecer</p>
+        </div>
+
+        <div class="bg-white shadow rounded-xl p-6 border-l-4 border-green-500">
+            <h3 class="text-gray-500 text-sm">Valor Inventario</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ valorInventario | currency:'MXN':'symbol' }}</p>
+            <p class="text-green-600 text-sm mt-1">+2.3% desde el mes pasado</p>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="px-8 flex items-center justify-between mt-4">
+
+        <!-- Buscar -->
+        <div class="relative w-72">
+            <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm"
+                class="w-full px-4 py-2 pl-10 rounded-lg shadow-sm bg-white border focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+
+            <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.15 13.15z" />
+            </svg>
+        </div>
+
+        <!-- BOTÓN ABRIR MODAL -->
+        <button (click)="abrirModal()"
+            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Agregar Producto
+        </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="p-8">
+
+        <div *ngIf="cargando" class="text-center text-gray-500 text-lg py-10">
+            Cargando productos...
+        </div>
+
+        <div *ngIf="!cargando && productosFiltrados.length === 0" class="text-center text-gray-500 text-xl mt-10">
+            No se encontraron productos.
+        </div>
+
+        <div *ngIf="!cargando && productosFiltrados.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+            <div *ngFor="let p of productosFiltrados"
+                class="bg-white shadow rounded-xl overflow-hidden hover:shadow-lg transition">
+
+                <div [routerLink]="['/producto', p.id_producto]" class="img-box">
+                    <img *ngIf="p.imagen" [src]="p.imagen" class="product-img" />
+                </div>
+
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-gray-800">{{ p.nombre }}</h3>
+                    <p class="text-sm text-gray-500">{{ p.categoria_nombre || 'Sin categoría' }}</p>
+
+                    <p class="descripcion" *ngIf="p.descripcion">{{ p.descripcion }}</p>
+
+                    <div class="flex items-center justify-between mt-4">
+                        <p class="font-bold text-blue-600">{{ p.precio_venta | currency:'USD' }}</p>
+
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+                                'bg-red-100 text-red-600': p.cantidad_actual === 0,
+                                'bg-yellow-100 text-yellow-700': p.cantidad_actual <= 5 && p.cantidad_actual > 0,
+                                'bg-green-100 text-green-700': p.cantidad_actual > 5
+                            }">
+                            {{ p.cantidad_actual === 0 ? 'Agotado' :
+                            p.cantidad_actual <= 5 ? 'Stock Bajo' : 'En Stock' }} </span>
+                    </div>
+
+                    <div class="flex gap-3 mt-4">
+                        <button class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                            (click)="abrirModal(p)">
+                            Editar
+                        </button>
+
+                        <button class="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                            (click)="confirmEliminar(p)">
+                            <span *ngIf="isDeletingId !== p.id_producto">Eliminar</span>
+                            <span *ngIf="isDeletingId === p.id_producto">...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================= -->
+    <!--        MODAL PRODUCTO     -->
+    <!-- ========================= -->
+    <div *ngIf="mostrarModal"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+
+        <div
+            class="bg-white w-full max-w-xl md:max-w-3xl rounded-2xl shadow-2xl overflow-hidden animate-fadeIn scale-95">
+
+            <!-- HEADER -->
+            <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+                    {{ selectedProduct ? 'Editar Producto' : 'Nuevo Producto' }}
+                </h2>
+                <button (click)="cerrarModal()" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">
+                    ✕
+                </button>
+            </div>
+
+            <!-- CONTENT (scrollable) -->
+            <div class="max-h-[70vh] overflow-y-auto px-6 py-4 space-y-4">
+
+                <form [formGroup]="productoForm" (ngSubmit)="guardarProducto()" class="space-y-4">
+
+                    <!-- Nombre -->
+                    <div>
+                        <label class="font-semibold text-gray-700">Nombre</label>
+                        <input type="text" formControlName="nombre"
+                            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Descripción -->
+                    <div>
+                        <label class="font-semibold text-gray-700">Descripción</label>
+                        <textarea formControlName="descripcion"
+                            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
+                    <!-- Marca -->
+                    <div>
+                        <label class="font-semibold text-gray-700">Marca</label>
+                        <select formControlName="marca" class="w-full p-2 border rounded-lg bg-white">
+                            <option [value]="null">Selecciona una marca</option>
+                            <option *ngFor="let m of marcas" [value]="m.id_marca">{{ m.nombre }}</option>
+                        </select>
+                    </div>
+
+                    <!-- Imagen -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block">Imagen</label>
+                        <input type="file" (change)="onFileSelected($event)"
+                            class="w-full p-2 border rounded-lg bg-white" />
+                        <img *ngIf="selectedProduct?.imagen" [src]="selectedProduct.imagen"
+                            class="w-24 h-24 object-cover rounded-lg mb-3" />
+
+                    </div>
+
+                    <!-- Grid precios + cantidad -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div>
+                            <label class="font-semibold text-gray-700">Precio Compra</label>
+                            <input type="number" formControlName="precio_compra" class="w-full p-2 border rounded-lg" />
+                        </div>
+
+                        <div>
+                            <label class="font-semibold text-gray-700">Precio Venta</label>
+                            <input type="number" formControlName="precio_venta" class="w-full p-2 border rounded-lg" />
+                        </div>
+
+                        <div>
+                            <label class="font-semibold text-gray-700">Cantidad</label>
+                            <input type="number" formControlName="cantidad_agregar"
+                                class="w-full p-2 border rounded-lg" />
+                            <!-- <input type="number" formControlName="cantidad_agregar"
+                                class="w-full p-2 border rounded-lg mt-2" placeholder="Agregar cantidad" /> -->
+                        </div>
+
+                    </div>
+
+                    <!-- NUEVOS CAMPOS -->
+
+                    <div>
+                        <label class="font-semibold text-gray-700">Código de barras</label>
+                        <input type="text" formControlName="codigo_barras" class="w-full p-2 border rounded-lg" />
+                    </div>
+
+                    <div>
+                        <label class="font-semibold text-gray-700">Categoría</label>
+                        <select formControlName="categoria" class="w-full p-2 border rounded-lg bg-white">
+                            <option [value]="null">Selecciona categoría</option>
+                            <option *ngFor="let c of categorias" [value]="c.id_categoria">{{ c.nombre }}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold text-gray-700">Proveedor</label>
+                        <select formControlName="proveedor" class="w-full p-2 border rounded-lg bg-white">
+                            <option [value]="null">Selecciona proveedor</option>
+                            <option *ngFor="let p of proveedores" [value]="p.id_proveedor">{{ p.nombre }}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold text-gray-700">Unidad de medida</label>
+                        <select formControlName="unidad_medida" class="w-full p-2 border rounded-lg bg-white">
+                            <option *ngFor="let u of opcionesUnidad" [value]="u.value">
+                                {{ u.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="px-6 py-4 border-t bg-gray-50">
+                <button type="submit" (click)="guardarProducto()"
+                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    {{ isSaving ? 'Guardando...' : 'Guardar' }}
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>

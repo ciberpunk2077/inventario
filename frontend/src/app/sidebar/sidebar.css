@@ -1,0 +1,55 @@
+.sidebar, .menu{
+	height: 100%;
+	
+}
+
+.sidebar {
+	width: 250px;
+		/* ancho del sidebar */
+		flex-shrink: 0;
+	overflow-y: auto;
+	
+}
+
+:host ::ng-deep body {
+	margin: 0;
+}
+
+/*-----------------------------------------------------------------------------------------*/
+/* ======== RESPONSIVE SIDEBAR ======== */
+@media (max-width: 768px) {
+
+	:host {
+		height: auto !important;
+		min-height: auto !important;
+	}
+
+	.sidebar {
+		position: fixed;
+		top: 0;
+		left: -250px;
+		/* oculto */
+		width: 250px;
+		height: 100vh;
+		background: #fff;
+		z-index: 999;
+		transition: left 0.3s ease;
+		overflow-y: auto;
+		box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+	}
+
+	/* Cuando esté abierto */
+	.sidebar.open {
+		left: 0;
+	}
+
+		
+	
+		.content,
+		main,
+		.page-container {
+			overflow-y: auto !important;
+			/* el scroll solo aquí */
+			
+		}
+}

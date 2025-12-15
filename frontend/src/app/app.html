@@ -1,0 +1,11 @@
+<div class="layout">
+    <button class="menu-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <app-sidebar #sidebar></app-sidebar>
+
+    <div class="main-content" [class.collapsed]="isCollapsed">
+        <router-outlet></router-outlet>
+    </div>
+</div>

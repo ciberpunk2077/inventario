@@ -1,0 +1,36 @@
+/* Scroll solo del cuerpo */
+.custom-scroll-area {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Scrollbar elegante */
+.custom-scroll-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scroll-area::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+}
+
+.custom-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+}

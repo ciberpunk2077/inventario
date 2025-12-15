@@ -1,0 +1,78 @@
+/* ---- LAYOUT ---- */
+.layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    gap: 0 !important;
+}
+
+/* ---- SIDEBAR ---- */
+app-sidebar {
+    width: 236px;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    background: red;
+    height: 100vh;
+}
+
+app-sidebar.collapsed {
+    width: 70px;
+}
+
+/* ---- CONTENIDO ---- */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    transition: margin-left 0.3s ease;
+}
+
+/* cuando el sidebar se colapsa */
+.main-content.collapsed {
+    margin-left: -180px;
+    /* 250 - 70 = 180 */
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+
+    app-sidebar {
+        position: fixed;
+        left: -250px;
+        top: 0;
+        width: 250px !important;
+        z-index: 999;
+        background: white;
+    }
+
+    app-sidebar.open {
+        left: 0;
+    }
+
+    .main-content {
+        width: 100vw !important;
+        margin-left: 0 !important;
+        flex: none;
+    }
+}
+
+/* ---- BOTÓN MENÚ ---- */
+@media (max-width: 768px) {
+    .menu-btn {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        font-size: 22px;
+        background: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+}
