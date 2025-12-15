@@ -107,15 +107,25 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True)
     marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True, blank=True)
-    imagen = models.ImageField(upload_to=producto_imagen_path, blank=True, null=True)
+    imagen = models.ImageField(upload_to="producto/", blank=True, null=True)
     precio_compra = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     stock_minimo = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     stock_maximo = models.IntegerField(default=100, validators=[MinValueValidator(0)])
-    unidad_medida = models.CharField(max_length=20, blank=True, null=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     activo = models.BooleanField(default=True)
+    unidad_medida = models.CharField(
+        max_length=50,
+        choices=[
+            ('pieza', 'Pieza'),
+            ('caja', 'Caja'),
+            ('kg', 'Kilogramo'),
+            ('lt', 'Litro'),
+            ('m', 'Metro'),
+        ],
+           default='pieza'
+    )
 
     class Meta:
         db_table = 'productos'
@@ -123,6 +133,21 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    def delete(self, *args, **kwargs):
+        if self.imagen:
+            self.imagen.delete(save=False)
+        super().delete(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        try:
+            producto_ant = Producto.objects.get(pk=self.pk)
+            if producto_ant.imagen and producto_ant.imagen != self.imagen:
+                producto_ant.imagen.delete(save=False)
+        except Producto.DoesNotExist:
+            pass
+
+        super().save(*args, **kwargs)
 
     @property
     def cantidad_actual(self):
@@ -130,6 +155,8 @@ class Producto(models.Model):
             return self.inventario.cantidad_actual
         except Inventario.DoesNotExist:
             return 0
+        
+
 
 class Inventario(models.Model):
     id_inventario = models.AutoField(primary_key=True)
@@ -144,6 +171,32 @@ class Inventario(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad_actual}"
+    
+    def mover(self, cantidad, tipo, motivo, proveedor=None, usuario='Sistema'):
+        anterior = self.cantidad_actual
+
+        if tipo == 'ENTRADA':
+            nueva = anterior + cantidad
+        elif tipo == 'SALIDA':
+            if cantidad > anterior:
+                raise ValueError("Stock insuficiente")
+            nueva = anterior - cantidad
+        else:
+            nueva = cantidad
+
+        self.cantidad_actual = nueva
+        self.save()
+
+        MovimientoInventario.objects.create(
+            producto=self.producto,
+            tipo_movimiento=tipo,
+            cantidad=cantidad,
+            cantidad_anterior=anterior,
+            cantidad_nueva=nueva,
+            motivo=motivo,
+            proveedor=proveedor,
+            usuario_responsable=usuario
+        )
 
 class MovimientoInventario(models.Model):
     TIPO_MOVIMIENTO = [

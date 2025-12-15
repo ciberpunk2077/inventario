@@ -24,7 +24,7 @@ class ProductoSerializer(serializers.ModelSerializer):
     proveedor_nombre = serializers.CharField(source='proveedor.nombre', read_only=True)
     marca_nombre = serializers.CharField(source='marca.nombre', read_only=True)
     imagen_url = serializers.SerializerMethodField()
-    cantidad_actual = serializers.IntegerField(read_only=True)
+    cantidad_actual = serializers.IntegerField(source='inventario.cantidad_actual', read_only=True)
 
     class Meta:
         model = Producto
