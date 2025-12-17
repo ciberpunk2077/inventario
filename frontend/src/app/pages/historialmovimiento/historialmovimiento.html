@@ -1,0 +1,119 @@
+<div class="historial-container">
+
+
+
+    <!-- Dashboard de Resumen -->
+    <div class="dashboard">
+        <div class="cards">
+
+            <div class="dashboard-card entrada">
+                <div class="card-icon">⬆</div>
+                <div class="card-content">
+                    <div class="card-title">Entradas</div>
+                    <div class="card-value">{{ totalEntradas }}</div>
+                    <div>Total Productos</div>
+                    <div>{{ valorInventario }}</div>
+                </div>
+            </div>
+
+            <div class="dashboard-card salida">
+                <div class="card-icon">⬇</div>
+                <div class="card-content">
+                    <div class="card-title">Salidas</div>
+                    <div class="card-value">{{ totalSalidas }}</div>
+                </div>
+            </div>
+
+            <div class="dashboard-card inventario">
+                <div class="card-icon">📦</div>
+                <div class="card-content">
+                    <div class="card-title">Total Movimientos</div>
+                    <div class="card-value">{{ movimientos.length }}</div>
+                </div>
+            </div>
+
+            <div class="dashboard-card valor">
+                <div class="card-icon">💲</div>
+                <div class="card-content">
+                    <div class="card-title">Valor Inventario</div>
+                    <div class="card-value">{{ valorInventario | currency:'USD' }}</div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Filtros -->
+
+    <div class="filtros">
+        <input type="text" placeholder="Buscar producto, marca o usuario" [(ngModel)]="searchTerm"
+            (input)="filtrarMovimientos()" />
+        <input type="date" [(ngModel)]="startDate" />
+        <!-- <input type="date" [(ngModel)]="endDate" /> -->
+        <button class="btn-accion" (click)="cargarMovimientos()">Actualizar</button>
+        <button class="btn-accion excel" (click)="exportarExcel()">Exportar a Excel</button>
+
+        <div class="filtros-avanzados">
+
+            <!-- Selector principal -->
+            <select [(ngModel)]="filtroPrincipal" (change)="actualizarOpciones()">
+                <option value="">Filtrar por...</option>
+                <option value="marca">Marca</option>
+                <option value="tipo">Tipo</option>
+                <option value="motivo">Motivo</option>
+            </select>
+
+            <!-- Selector dependiente -->
+            <select [(ngModel)]="filtroValor" (change)="aplicarFiltro()" [disabled]="!opcionesFiltro.length">
+                <option value="">Selecciona una opción</option>
+                <option *ngFor="let op of opcionesFiltro" [value]="op">
+                    {{ op }}
+                </option>
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- Tabla de movimientos -->
+    <div class="table-wrapper" *ngIf="!cargando">
+        <table class="table" *ngIf="!cargando">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Marca</th>
+                    <th>Cantidad</th>
+                    <th>Tipo</th>
+                    <th>Motivo</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let mov of movimientosFiltrados">
+                    <td>
+                        <a class="producto-link" [routerLink]="['/productos', mov.id_producto]">
+                            {{ mov.productoNombre }}</a>
+                    </td>
+                    <td>{{ mov.productoMarca }}</td>
+                    <td>{{ mov.cantidad }}</td>
+                    <td><span class="badge" [ngClass]="mov.tipo.toLowerCase()">
+                            {{ mov.tipo }}
+                        </span></td>
+                    <td><span class="badge motivo" [ngClass]="mov.motivoClase">
+                            {{ mov.motivo }}
+                        </span></td>
+                    <td>{{ mov.usuarioNombre }}</td>
+                    <td>{{ mov.fecha | date:'short' }}</td>
+                    <td>{{ mov.comentario }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="cargando" *ngIf="cargando">Cargando...</div>
+    <div class="no-movimientos" *ngIf="!cargando && movimientosFiltrados.length === 0">No hay movimientos</div>
+
+</div>

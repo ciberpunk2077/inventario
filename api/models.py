@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 import os
+from django.db import transaction
 
 def producto_imagen_path(instance, filename):
     # Guardar imagen en: media/productos/id_producto/filename
@@ -172,17 +173,54 @@ class Inventario(models.Model):
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad_actual}"
     
-    def mover(self, cantidad, tipo, motivo, proveedor=None, usuario='Sistema'):
+    # def mover(self, cantidad, tipo, motivo, proveedor=None, usuario='Sistema'):
+    #     anterior = self.cantidad_actual
+
+    #     if tipo == 'ENTRADA':
+    #         nueva = anterior + cantidad
+    #     elif tipo == 'SALIDA':
+    #         if cantidad > anterior:
+    #             raise ValueError("Stock insuficiente")
+    #         nueva = anterior - cantidad
+    #     else:
+    #         nueva = cantidad
+
+    #     self.cantidad_actual = nueva
+    #     self.save()
+
+    #     MovimientoInventario.objects.create(
+    #         producto=self.producto,
+    #         tipo_movimiento='SALIDA',
+    #         cantidad=cantidad,
+    #         cantidad_anterior=inventario.cantidad_actual + cantidad,  # si quieres llevar el histórico
+    #         cantidad_nueva=inventario.cantidad_actual,
+    #         motivo=motivo,
+    #         proveedor=proveedor,
+    #         usuario_responsable=request.user.username  # opcional
+    #     )
+
+
+    @transaction.atomic
+    def mover(self, *, cantidad, tipo, motivo, usuario, proveedor=None, observaciones=None):
+        
+        if tipo not in ['ENTRADA', 'SALIDA', 'AJUSTE']:
+            raise ValueError("Tipo de movimiento inválido")
+        
         anterior = self.cantidad_actual
 
         if tipo == 'ENTRADA':
             nueva = anterior + cantidad
+
         elif tipo == 'SALIDA':
             if cantidad > anterior:
                 raise ValueError("Stock insuficiente")
             nueva = anterior - cantidad
-        else:
+
+        elif tipo == 'AJUSTE':
             nueva = cantidad
+
+        else:
+            raise ValueError("Tipo inválido")
 
         self.cantidad_actual = nueva
         self.save()
@@ -195,8 +233,12 @@ class Inventario(models.Model):
             cantidad_nueva=nueva,
             motivo=motivo,
             proveedor=proveedor,
-            usuario_responsable=usuario
+            usuario_responsable=usuario,
+            observaciones=observaciones
         )
+
+        return movimiento
+
 
 class MovimientoInventario(models.Model):
     TIPO_MOVIMIENTO = [

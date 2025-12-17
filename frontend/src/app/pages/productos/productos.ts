@@ -56,6 +56,14 @@ export class Productos implements OnInit {
 
   totalPiezas = 0;
 
+  mostrarModalSalida = false;
+  productoSalida: any = null;
+
+  salidaCantidad = 1;
+  salidaMotivo = 'VENTA';
+  salidaComentario = '';
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -89,6 +97,22 @@ export class Productos implements OnInit {
     this.productosFiltrados = [...this.productos];
   }
 
+  registrarSalida(producto: any, cantidad: number) {
+  if (cantidad <= 0) return;
+
+  
+  this.productoService
+    .salidaStock(producto.id_producto, cantidad, 'VENTA')
+    .subscribe({
+      next: (res) => {
+        producto.cantidad_actual = res.cantidad_nueva;
+        this.refrescarVista();
+      },
+      error: (err) => {
+        alert(err.error?.error || 'Error al registrar salida');
+      }
+    });
+}
 
   calcularTotalPiezas() {
   this.totalPiezas = this.productos.reduce(
@@ -317,6 +341,8 @@ guardarProducto() {
     return;
   }
 
+  
+
   // ==================================
   // CREAR PRODUCTO NUEVO
   // ==================================
@@ -390,6 +416,39 @@ guardarProducto() {
   this.totalProductos = this.productos.length;
 }
 
+abrirModalSalida(producto: any) {
+  this.productoSalida = producto;
+  this.salidaCantidad = 1;
+  this.salidaMotivo = 'VENTA';
+  this.salidaComentario = '';
+  this.mostrarModalSalida = true;
+}
+
+cerrarModalSalida() {
+  this.mostrarModalSalida = false;
+  this.productoSalida = null;
+}
+
+confirmarSalida() {
+  if (!this.productoSalida || this.salidaCantidad <= 0) return;
+
+  this.productoService
+    .salidaStock(
+      this.productoSalida.id_producto,
+      Number(this.salidaCantidad) || 1,
+      this.salidaMotivo
+    )
+    .subscribe({
+      next: (res) => {
+        this.productoSalida.cantidad_actual = res.cantidad_nueva;
+        this.refrescarVista();
+        this.cerrarModalSalida();
+      },
+      error: (err) => {
+        alert(err.error?.error || 'Error al registrar salida');
+      }
+    });
+}
 
   
 }

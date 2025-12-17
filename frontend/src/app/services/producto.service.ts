@@ -10,6 +10,9 @@ export class ProductoService {
 
   private apiUrl = 'http://localhost:8000/api/productos/';
   private baseApi = 'http://localhost:8000/api';
+  private productosUrl = `${this.baseApi}/productos`;
+
+  
 
   constructor(private http: HttpClient) { }
 
@@ -27,12 +30,13 @@ export class ProductoService {
 
 
 
-//   actualizarStock(id: number, cantidad: number, tipo: string): Observable<any> {
-//   return this.http.put(`${this.apiUrl}${id}/actualizar-stock/`, {
-//     cantidad,
-//     tipo
-//   });
-// }
+salidaStock(id: number, cantidad: number, motivo: string) {
+  return this.http.post<any>(
+    `${this.productosUrl}/${id}/salida/`,
+    { cantidad, motivo }
+  );
+}
+
 
   // CRUD basico usado por el componente
    getProducto(id: number) {
