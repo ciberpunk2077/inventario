@@ -1,21 +1,31 @@
 import { Routes } from '@angular/router';
-import { Inicio } from './inicio/inicio';
 import { Productos } from './pages/productos/productos';
-// import { FormProducto } from './pages/form-producto/form-producto';
 import { Marca } from './pages/marca/marca';
 import { Provedor } from './pages/provedor/provedor';
 import { CategoriasComponent } from './pages/categoria/categoria';
-import { HistorialMovimientosComponent } from './pages/historialmovimiento/historialmovimiento';
+import { MovimientoInventarioComponent } from './pages/historialmovimiento/historialmovimiento';
+import { AuthGuard } from './guards/auth-guard';
+
+
+import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout';
+import { DashboardHomeComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
-	{ path: '', component: Inicio },
-	{ path: 'historial', component: HistorialMovimientosComponent },
-	{ path: 'inicio', redirectTo: '', pathMatch: 'full' },
-    { path: 'productos', component: Productos },
-	{ path: 'producto/:id', loadComponent: () => import('./pages/form-producto/form-producto')
-      .then(m => m.FormProducto) },
-	{ path: 'marcas', component: Marca },
-	{path: 'provedores', component: Provedor},
-	{path: 'categorias', component: CategoriasComponent},
-];
+  { path: 'login', loadComponent: () => import('./login/login/login').then(m => m.LoginComponent) },
 
+  {
+    path: 'dashboard',
+    component: DashboardLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: DashboardHomeComponent },
+      { path: 'productos', component: Productos },
+      { path: 'marcas', component: Marca },
+      { path: 'proveedores', component: Provedor },
+      { path: 'categorias', component: CategoriasComponent },
+      { path: 'historial', component: MovimientoInventarioComponent },
+    ]
+  },
+
+  { path: '**', redirectTo: 'login' }
+];

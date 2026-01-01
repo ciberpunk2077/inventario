@@ -1,0 +1,7 @@
+from .categoria_serializers import CategoriaSerializer
+from .producto_serializers import ProductoSerializer
+from .inventario_serializers import InventarioSerializer
+from .movimiento_serializers import MovimientoInventarioSerializer
+from .compra_serializers import CompraSerializer, DetalleCompraSerializer
+from .marca_serializers import MarcaSerializer
+from .proveedor_serializers import ProveedorSerializer

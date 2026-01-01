@@ -10,9 +10,9 @@
                 <div class="card-icon">⬆</div>
                 <div class="card-content">
                     <div class="card-title">Entradas</div>
-                    <div class="card-value">{{ totalEntradas }}</div>
+                    <div class="card-value">{{ resumen?.total_entradas || 0 }}</div>
                     <div>Total Productos</div>
-                    <div>{{ valorInventario }}</div>
+                    <div></div>
                 </div>
             </div>
 
@@ -20,7 +20,7 @@
                 <div class="card-icon">⬇</div>
                 <div class="card-content">
                     <div class="card-title">Salidas</div>
-                    <div class="card-value">{{ totalSalidas }}</div>
+                    <div class="card-value">{{ resumen?.total_salidas || 0 }}</div>
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
                 <div class="card-icon">💲</div>
                 <div class="card-content">
                     <div class="card-title">Valor Inventario</div>
-                    <div class="card-value">{{ valorInventario | currency:'USD' }}</div>
+                    <div class="card-value">{{ resumen?.valor_inventario | currency:'MXN' }}</div>
                 </div>
             </div>
 

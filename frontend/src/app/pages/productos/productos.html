@@ -14,7 +14,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-8">
         <div class="bg-white shadow rounded-xl p-6 border-l-4 border-blue-500">
             <h3 class="text-gray-500 text-sm">Total de Productos</h3>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ totalProductos }}</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1"></p>
             <p class="text-green-500 text-sm mt-1">{{ totalPiezas }} piezas en inventario</p>
         </div>
 
@@ -32,7 +32,7 @@
 
         <div class="bg-white shadow rounded-xl p-6 border-l-4 border-green-500">
             <h3 class="text-gray-500 text-sm">Valor Inventario</h3>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ valorInventario | currency:'MXN':'symbol' }}</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1"></p>
             <p class="text-green-600 text-sm mt-1">+2.3% desde el mes pasado</p>
         </div>
     </div>
@@ -80,7 +80,8 @@
                 class="bg-white shadow rounded-xl overflow-hidden hover:shadow-lg transition">
 
                 <div [routerLink]="['/producto', p.id_producto]" class="img-box">
-                    <img *ngIf="p.imagen" [src]="p.imagen" class="product-img" />
+                    <!-- <img *ngIf="p.imagen" [src]="p.imagen" class="product-img" /> -->
+                    <img [src]="p.imagen_url || 'assets/no-image.png'">
                 </div>
 
                 <div class="p-4">

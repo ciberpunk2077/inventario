@@ -1,0 +1,31 @@
+<h2>Movimientos</h2>
+<button (click)="crearMovimiento()">
+    Crear movimiento de prueba
+</button>
+
+<p *ngIf="loading">Cargando...</p>
+
+<table *ngIf="!loading && movimientos.length">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let m of movimientos">
+            <td>{{ m.producto }}</td>
+            <td>{{ m.tipo }}</td>
+            <td>{{ m.cantidad }}</td>
+            <td>{{ m.motivo }}</td>
+            <td>{{ m.fecha }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p *ngIf="!loading && !movimientos.length">
+    No hay movimientos registrados
+</p>

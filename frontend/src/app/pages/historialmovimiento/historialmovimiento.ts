@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule, NgFor, NgIf, CurrencyPipe, NgClass } from '@angular/common';
+import { CommonModule, NgFor, NgIf, NgClass } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-// import { MovimientoService, MovimientoStock } from '../../services/movimientoservice';
 import * as XLSX from 'xlsx';
 import { MovimientoMapper } from '../../core/models/mappers/movimiento.mapper';
-
 import { MovimientoService } from '../../services/movimientoservice';
 import { MovimientoStock } from '../../core/models/movimiento-stock.model';
+import { DashboardService } from '../../services/dashboard.service';
 
 
 @Component({
@@ -18,13 +17,12 @@ import { MovimientoStock } from '../../core/models/movimiento-stock.model';
     RouterModule,
     NgFor, NgIf,
     FormsModule,
-    CurrencyPipe,
     ReactiveFormsModule,
       ],
   templateUrl: './historialmovimiento.html',
   styleUrls: ['./historialmovimiento.css']
 })
-export class HistorialMovimientosComponent implements OnInit {
+export class MovimientoInventarioComponent implements OnInit {
 
   movimientos: MovimientoStock[] = [];
   movimientosFiltrados: MovimientoStock[] = [];
@@ -36,20 +34,25 @@ export class HistorialMovimientosComponent implements OnInit {
   startDate: string = '';
   endDate: string = '';
 
-  totalEntradas = 0;
-  totalSalidas = 0;
-  valorInventario = 0;
+  // totalEntradas = 0;
+  // totalSalidas = 0;
+  // valorInventario = 0;
 
   filtroPrincipal: 'marca' | 'tipo' | 'motivo' | '' = '';
   filtroValor: string = '';
   opcionesFiltro: string[] = [];
+  resumen: any = null;
 
 
-  constructor(private movimientoService: MovimientoService) {}
+  constructor(private movimientoService: MovimientoService, private dashboardService: DashboardService) {}
   
 
   ngOnInit() {
     this.cargarMovimientos();
+
+    this.dashboardService.obtenerResumen().subscribe({
+    next: data => this.resumen = data
+  });
   }
 
   actualizarOpciones() {
@@ -98,18 +101,18 @@ export class HistorialMovimientosComponent implements OnInit {
 
 
 
-  actualizarDashboard() {
-    this.totalEntradas = this.movimientos.filter(m => m.tipo === 'ENTRADA').length;
-    this.totalSalidas = this.movimientos.filter(m => m.tipo === 'SALIDA').length;
+  // actualizarDashboard() {
+  //   this.totalEntradas = this.movimientos.filter(m => m.tipo === 'ENTRADA').length;
+  //   this.totalSalidas = this.movimientos.filter(m => m.tipo === 'SALIDA').length;
 
-    // Si quieres calcular valor inventario aproximado
-    this.valorInventario = this.movimientos
-      .filter(m => m.tipo === 'ENTRADA')
-      .reduce((total, m) => total + m.cantidad, 0) 
-      - this.movimientos
-        .filter(m => m.tipo === 'SALIDA')
-        .reduce((total, m) => total + m.cantidad, 0);
-  }
+  //   // Si quieres calcular valor inventario aproximado
+  //   this.valorInventario = this.movimientos
+  //     .filter(m => m.tipo === 'ENTRADA')
+  //     .reduce((total, m) => total + m.cantidad, 0) 
+  //     - this.movimientos
+  //       .filter(m => m.tipo === 'SALIDA')
+  //       .reduce((total, m) => total + m.cantidad, 0);
+  // }
 
   
 
@@ -132,7 +135,7 @@ export class HistorialMovimientosComponent implements OnInit {
           this.opcionesFiltro = [];
 
           // 4️⃣ Actualizar dashboard
-          this.actualizarDashboard();
+          // this.actualizarDashboard();
           this.cargando = false;
         },
         error: () => this.cargando = false

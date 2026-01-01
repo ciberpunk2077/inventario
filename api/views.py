@@ -19,6 +19,10 @@ from .serializers import ( CategoriaSerializer, ProveedorSerializer, ProductoSer
 
 from api.models import Inventario
 
+from rest_framework import viewsets
+from api.models import Categoria
+from api.serializers import CategoriaSerializer
+
 
 class ValorInventarioView(APIView):
     def get(self, request):
@@ -63,15 +67,12 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
 
-
-
 # ------------------------------
 # Inventario
 # ------------------------------
 class InventarioViewSet(viewsets.ModelViewSet):
     queryset = Inventario.objects.all()
     serializer_class = InventarioSerializer
-
 
 # ------------------------------
 # Movimiento de Inventario
@@ -80,41 +81,6 @@ class MovimientoInventarioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MovimientoInventario.objects.all().order_by('-fecha_movimiento')
     serializer_class = MovimientoInventarioSerializer
 
-    # def create(self, request, *args, **kwargs):
-    #     """Aplicar el movimiento al inventario automáticamente"""
-    #     datos = request.data
-    #     producto_id = datos.get("producto")
-    #     cantidad = int(datos.get("cantidad", 0))
-    #     tipo = datos.get("tipo_movimiento")
-
-    #     # Obtener inventario
-    #     inventario = Inventario.objects.get(producto_id=producto_id)
-
-    #     cantidad_anterior = inventario.cantidad_actual
-
-    #     # Aplicar movimiento
-    #     if tipo == "ENTRADA":
-    #         inventario.cantidad_actual += cantidad
-    #     elif tipo == "SALIDA":
-    #         inventario.cantidad_actual -= cantidad
-    #     elif tipo == "AJUSTE":
-    #         inventario.cantidad_actual = cantidad
-    #     else:
-    #         return Response({"error": "Tipo no válido"}, status=400)
-
-    #     inventario.save()
-
-    #     # Guardar movimiento con cantidades antes y después
-    #     datos["cantidad_anterior"] = cantidad_anterior
-    #     datos["cantidad_nueva"] = inventario.cantidad_actual
-
-    #     serializer = self.get_serializer(data=datos)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 # ------------------------------
 # Compra
 # ------------------------------
@@ -122,14 +88,12 @@ class CompraViewSet(viewsets.ModelViewSet):
     queryset = Compra.objects.all()
     serializer_class = CompraSerializer
 
-
 # ------------------------------
 # Detalle de Compra
 # ------------------------------
 class DetalleCompraViewSet(viewsets.ModelViewSet):
     queryset = DetalleCompra.objects.all()
     serializer_class = DetalleCompraSerializer
-
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -202,52 +166,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
             }
         }, status=status.HTTP_201_CREATED)
             
-        
-    
 
-    # @action(detail=True, methods=['post'])
-    # def salida(self, request, pk=None):
-    #     producto = self.get_object()
-    #     cantidad = int(request.data.get('cantidad', 0))
-    #     motivo = request.data.get('motivo', 'VENTA')
-
-    #     if cantidad <= 0:
-    #         return Response(
-    #             {'error': 'Cantidad inválida'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-
-    #     inventario = Inventario.objects.get(producto=producto)
-    #     cantidad_anterior = inventario.cantidad_actual
-
-    #     if inventario.cantidad_actual < cantidad:
-    #         return Response(
-    #             {'error': 'Stock insuficiente'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-        
-    #     cantidad_anterior = inventario.cantidad_actual
-    #     inventario.cantidad_actual -= cantidad
-    #     inventario.save()
-
-    #     MovimientoInventario.objects.create(
-    #         producto=producto,
-    #         tipo_movimiento='SALIDA',
-    #         cantidad=cantidad,
-    #         cantidad_anterior=cantidad_anterior,  # histórico
-    #         cantidad_nueva=inventario.cantidad_actual,
-    #         motivo=motivo,usuario_responsable=request.user.username if request.user.is_authenticated else 'Administrador',
-    #     )
-
-    #     return Response({
-    #         'mensaje': 'Salida registrada',
-    #         'cantidad_nueva': inventario.cantidad_actual
-    #     })
-
-
-
-
-# 
 
 # ------------------------------
 # Marca

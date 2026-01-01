@@ -1,0 +1,23 @@
+<div class="login-wrapper">
+    <div class="login-box">
+        <h1>Inventario</h1>
+        <p class="subtitle">Acceso al sistema</p>
+
+        <form (ngSubmit)="login()">
+            <div class="field">
+                <span class="icon">👤</span>
+                <input type="text" placeholder="Usuario" [(ngModel)]="credenciales.username" name="username" required />
+            </div>
+
+            <div class="field">
+                <span class="icon">🔒</span>
+                <input type="password" placeholder="Contraseña" [(ngModel)]="credenciales.password" name="password"
+                    required />
+            </div>
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <p class="error" *ngIf="error">{{ error }}</p>
+    </div>
+</div>

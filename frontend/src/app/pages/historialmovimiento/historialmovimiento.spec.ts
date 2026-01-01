@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 // import { HistorialmovimientoComponent } from './historialmovimiento';
-import { HistorialMovimientosComponent } from './historialmovimiento';
+import { MovimientoInventarioComponent } from './historialmovimiento';
 
-describe('HistorialMovimientosComponent', () => {
-  let component: HistorialMovimientosComponent;
-  let fixture: ComponentFixture<HistorialMovimientosComponent>;
+describe('MovimientoInventarioComponent', () => {
+  let component: MovimientoInventarioComponent;
+  let fixture: ComponentFixture<MovimientoInventarioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HistorialMovimientosComponent]
+      imports: [MovimientoInventarioComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HistorialMovimientosComponent);
+    fixture = TestBed.createComponent(MovimientoInventarioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

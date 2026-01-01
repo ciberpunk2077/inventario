@@ -1,0 +1,20 @@
+<h2>Dashboaaaaaaaaaaard</h2>
+<div class="dashboard-cards" *ngIf="data; else loading">
+
+    <div class="card">
+        <h3>Total Productos</h3>
+        <p>{{ data.total_entradas }}</p>
+    </div>
+    <div class="card">
+        <h3>Total Piezas</h3>
+        <p>{{ data.total_salidas }}</p>
+    </div>
+    <div class="card">
+        <h3>Valor Inventario</h3>
+        <p>{{ data.stock_total | currency:'MXN' }}</p>
+    </div>
+</div>
+<ng-template #loading>
+    <p>Cargando datos...</p>
+
+</ng-template>

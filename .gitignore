@@ -1,25 +1,46 @@
-# Django
+# =========================
+# Django / Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*.log
 db.sqlite3
 
-# Entornos
+# Entornos virtuales
 venv/
-.env
+env/
+.venv/
 
-# Media (IMÁGENES)
+# Variables de entorno
+.env
+.env.*
+
+# Media y estáticos
 media/
 backend/media/
+staticfiles/
 
-# Angular
+# =========================
+# Angular / Node
+# =========================
 node_modules/
 dist/
 .angular/
+.cache/
+npm-debug.log*
+yarn-error.log*
 
-# IDE
+# =========================
+# IDEs
+# =========================
 .vscode/
 .idea/
 
-# OS
+# =========================
+# Sistema operativo
+# =========================
 .DS_Store
 Thumbs.db
+desktop.ini

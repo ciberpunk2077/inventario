@@ -5,14 +5,12 @@ import { Sidebar } from './sidebar/sidebar';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    Sidebar,
-  ],
+  imports: [ RouterOutlet, Sidebar,],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
+  
 })
-export class App {
+export class AppComponent  {
   isCollapsed = false;
 
 toggleSidebar() {

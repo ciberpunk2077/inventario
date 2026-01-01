@@ -1,8 +1,12 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
-import os
+from django.conf import settings
+from django.core.cache import cache
+from django.contrib.auth.models import AbstractUser
 from django.db import transaction
+
+
 
 def producto_imagen_path(instance, filename):
     # Guardar imagen en: media/productos/id_producto/filename
@@ -14,6 +18,19 @@ def proveedor_imagen_path(instance, filename):
 
 def marca_logo_path(instance, filename):
     return f'marcas/{instance.id_marca}/{filename}'
+
+
+class Usuario(AbstractUser):
+    ROLES = (
+        ('ADMIN', 'Administrador'),
+        ('CAPT', 'Capturista'),
+        ('USER', 'Usuario normal'),
+    )
+    rol = models.CharField(max_length=5, choices=ROLES, default='USER')
+
+    def __str__(self):
+        return self.username
+
 
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
@@ -28,6 +45,8 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+
 
 class Proveedor(models.Model):
     id_proveedor = models.AutoField(primary_key=True)
@@ -36,7 +55,7 @@ class Proveedor(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
-    imagen = models.ImageField(upload_to='proveedores/', blank=True, null=True)
+    imagen = models.ImageField(upload_to=proveedor_imagen_path, blank=True, null=True)
     fecha_registro = models.DateTimeField(default=timezone.now)
     activo = models.BooleanField(default=True)
 
@@ -71,7 +90,7 @@ class Proveedor(models.Model):
 class Marca(models.Model):
     id_marca = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=200, unique=True)
-    logo = models.ImageField(upload_to='marcas/', blank=True, null=True)
+    logo = models.ImageField(upload_to=marca_logo_path, blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     activo = models.BooleanField(default=True)
 
@@ -108,7 +127,7 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True)
     marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True, blank=True)
-    imagen = models.ImageField(upload_to="producto/", blank=True, null=True)
+    imagen = models.ImageField(upload_to=producto_imagen_path, blank=True, null=True)
     precio_compra = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     stock_minimo = models.IntegerField(default=0, validators=[MinValueValidator(0)])
@@ -150,6 +169,9 @@ class Producto(models.Model):
 
         super().save(*args, **kwargs)
 
+    def stock_bajo(self):
+        return self.cantidad_actual <= self.stock_minimo
+
     @property
     def cantidad_actual(self):
         try:
@@ -173,72 +195,71 @@ class Inventario(models.Model):
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad_actual}"
     
-    # def mover(self, cantidad, tipo, motivo, proveedor=None, usuario='Sistema'):
-    #     anterior = self.cantidad_actual
-
-    #     if tipo == 'ENTRADA':
-    #         nueva = anterior + cantidad
-    #     elif tipo == 'SALIDA':
-    #         if cantidad > anterior:
-    #             raise ValueError("Stock insuficiente")
-    #         nueva = anterior - cantidad
-    #     else:
-    #         nueva = cantidad
-
-    #     self.cantidad_actual = nueva
-    #     self.save()
-
-    #     MovimientoInventario.objects.create(
-    #         producto=self.producto,
-    #         tipo_movimiento='SALIDA',
-    #         cantidad=cantidad,
-    #         cantidad_anterior=inventario.cantidad_actual + cantidad,  # si quieres llevar el histórico
-    #         cantidad_nueva=inventario.cantidad_actual,
-    #         motivo=motivo,
-    #         proveedor=proveedor,
-    #         usuario_responsable=request.user.username  # opcional
-    #     )
 
 
     @transaction.atomic
-    def mover(self, *, cantidad, tipo, motivo, usuario, proveedor=None, observaciones=None):
-        
-        if tipo not in ['ENTRADA', 'SALIDA', 'AJUSTE']:
-            raise ValueError("Tipo de movimiento inválido")
-        
-        anterior = self.cantidad_actual
+    def mover(self, cantidad, tipo, motivo, proveedor=None, usuario=None):
 
-        if tipo == 'ENTRADA':
-            nueva = anterior + cantidad
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser mayor a cero")
 
-        elif tipo == 'SALIDA':
-            if cantidad > anterior:
+        cantidad_anterior = self.cantidad_actual
+
+        if tipo == "ENTRADA":
+            delta = cantidad
+        elif tipo == "SALIDA":
+            if self.cantidad_actual < cantidad:
                 raise ValueError("Stock insuficiente")
-            nueva = anterior - cantidad
-
-        elif tipo == 'AJUSTE':
-            nueva = cantidad
-
+            delta = -cantidad
+        elif tipo == "AJUSTE":
+            delta = cantidad - self.cantidad_actual # cantidad = stock final
         else:
-            raise ValueError("Tipo inválido")
+            raise ValueError("Tipo de movimiento inválido")
 
-        self.cantidad_actual = nueva
+        self.cantidad_actual += delta
         self.save()
 
-        MovimientoInventario.objects.create(
+        
+        if self.producto.stock_bajo():
+            alerta, creada = AlertaStock.objects.get_or_create(
+                producto=self.producto,
+                atendida=False,
+                defaults={
+                    "stock_actual": self.cantidad_actual,
+                    "stock_minimo": self.producto.stock_minimo
+                }
+            )
+
+
+            if not creada:
+                alerta.stock_actual = self.cantidad_actual
+                alerta.save(update_fields=["stock_actual"])
+
+
+        else:
+            AlertaStock.objects.filter(
+                producto=self.producto,
+                atendida=False
+            ).update(atendida=True)
+
+
+
+        movimiento = MovimientoInventario.objects.create(
+            # inventario=self,
             producto=self.producto,
             tipo_movimiento=tipo,
-            cantidad=cantidad,
-            cantidad_anterior=anterior,
-            cantidad_nueva=nueva,
+            cantidad=delta,
+            cantidad_anterior=cantidad_anterior,
+            cantidad_nueva=self.cantidad_actual,
             motivo=motivo,
             proveedor=proveedor,
-            usuario_responsable=usuario,
-            observaciones=observaciones
+            usuario_responsable=usuario
         )
 
-        return movimiento
+        cache.delete("dashboard_resumen")
 
+        return movimiento
+ 
 
 class MovimientoInventario(models.Model):
     TIPO_MOVIMIENTO = [
@@ -265,8 +286,13 @@ class MovimientoInventario(models.Model):
     motivo = models.CharField(max_length=10, choices=MOTIVO_MOVIMIENTO)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_movimiento = models.DateTimeField(default=timezone.now)
-    usuario_responsable = models.CharField(max_length=100)
     observaciones = models.TextField(blank=True, null=True)
+
+    usuario_responsable = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True)
 
     class Meta:
         db_table = 'movimientos_inventario'
@@ -315,3 +341,34 @@ class DetalleCompra(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} unidades"
+    
+
+class AlertaStockManager(models.Manager):
+    def pendientes(self):
+        return self.filter(atendida=False)
+
+
+
+
+class AlertaStock(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    stock_actual = models.IntegerField()
+    stock_minimo = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    atendida = models.BooleanField(default=False)
+
+    objects = AlertaStockManager()
+
+    class Meta:
+        db_table = 'alertas_stock'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['producto'],
+                condition=models.Q(atendida=False),
+                name='unique_alerta_stock_activa'
+            )
+        ]
+
+    def __str__(self):
+        return f"Alerta {self.producto.nombre}"
+    
