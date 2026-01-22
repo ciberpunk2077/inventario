@@ -11,9 +11,14 @@ from api.views import (
     ValorInventarioView,
 )
 
+from api.views.kardex_views import KardexProductoView
+from api.views.reportes_views import dashboard_resumen
+from api.views.usuario_views import PermisosUsuarioView
 from api.views.valor_inventario_view import ValorInventarioView
 from api.views.dashboard_view import DashboardResumenView
 from api.views import DashboardResumenView
+from api.views.dashboard_grafica_view import DashboardGraficaView
+
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -27,13 +32,10 @@ router.register(r'productos', ProductoViewSet)
 router.register(r'inventario', InventarioViewSet)
 router.register(r'movimientos', MovimientoInventarioViewSet, basename='movimiento')
 router.register(r'marcas', MarcaViewSet)
+from api.views.reporte_inventario_excel import ReporteInventarioExcelView
+from api.views.alertas_stock_view import AlertasStockMinimoView
 
 
-
-
-# El backend principal ya incluye este archivo bajo la ruta 'api/'
-# (ver backend/urls.py). Aquí exponemos las rutas del router en la
-# raíz del módulo para evitar una URL duplicada como /api/api/...
 
 urlpatterns = [
     path('inventario/valor/', ValorInventarioView.as_view()),  # 👈 AQUÍ
@@ -42,4 +44,12 @@ urlpatterns = [
     path('dashboard/resumen/', DashboardResumenView.as_view(), name='dashboard-resumen'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('productos/<int:producto_id>/kardex/', KardexProductoView.as_view(), name='kardex-producto'),
+    path('usuarios/permisos/', PermisosUsuarioView.as_view(), name='permisos-usuario'),
+    path('reportes/inventario/excel/', ReporteInventarioExcelView.as_view()),
+    path('alertas/stock_minimo/', AlertasStockMinimoView.as_view()),
+    path("dashboard/resumen/", dashboard_resumen, name="dashboard_resumen"),
+    path('kardex/<int:producto_id>/', KardexProductoView.as_view()),
+    path("dashboard/grafica/", DashboardGraficaView.as_view()),
+    
 ]

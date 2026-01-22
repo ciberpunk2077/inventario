@@ -1,0 +1,149 @@
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.image-preview {
+    display: flex;
+    justify-content: center;
+}
+
+.image-preview img {
+    max-width: 180px;
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.image-preview img:hover {
+    transform: scale(1.05);
+}
+
+input,
+select,
+textarea {
+    border-radius: 8px !important;
+}
+
+button {
+    border-radius: 8px;
+}
+
+.image-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-frame {
+    width: 220px;
+    height: 220px;
+    border-radius: 14px;
+    border: 2px dashed #ced4da;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-frame:hover {
+    border-color: #198754;
+    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.25);
+}
+
+
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #adb5bd;
+    font-size: 0.9rem;
+}
+
+.image-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+/* Columna imagen */
+.image-column {
+    width: 260px;
+    flex-shrink: 0;
+}
+
+/* Marco imagen */
+.image-frame {
+    width: 100%;
+    height: 260px;
+    border-radius: 16px;
+    border: 2px dashed #ced4da;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* transition: 0.2s ease; */
+    padding: 10px;
+}
+
+.image-frame:hover {
+    border-color: #198754;
+    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.25);
+}
+
+.image-frame img {
+    /* width: 100%;
+    height: 100%;
+    object-fit: cover; */
+    max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        display: block;
+}
+
+/* Placeholder */
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #adb5bd;
+    font-size: 0.9rem;
+}
+
+/* Columna formulario */
+.form-column {
+    flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-layout {
+        flex-direction: column;
+    }
+
+    .image-column {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}

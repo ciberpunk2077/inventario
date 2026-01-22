@@ -4,16 +4,17 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AppComponent } from './app/app';
 import { routes } from './app/app.routes';
 import { jwtInterceptor } from './app/interceptors/jwt.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { Chart, registerables } from 'chart.js';
 
-
-// bootstrapApplication(AppComponent, appConfig)
-//   .catch((err) => console.error(err));
+Chart.register(...registerables);
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([jwtInterceptor])
-    )
+    ),
+    provideCharts(withDefaultRegisterables())
   ]
 });

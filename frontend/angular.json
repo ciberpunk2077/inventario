@@ -81,8 +81,12 @@
               }
             ],
             "styles": [
-              "src/styles.css"
-            ]
+              "src/styles.css",
+              "src/assets/template/css/style.css"
+            ],
+            "scripts": [
+            "src/assets/template/js/main.js"
+          ]
           }
         }
       }

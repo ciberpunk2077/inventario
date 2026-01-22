@@ -1,0 +1,480 @@
+.products-container {
+    padding: 24px;
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* Header */
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.products-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* Botón nuevo */
+.btn-new {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-new:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+    width: 260px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #0d6efd;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filter {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* Tabla Card */
+.table-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    overflow: visible;
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+thead {
+    background: #f1f3f5;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+th,
+td {
+    padding: 14px 18px;
+    font-size: 14px;
+}
+
+th {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Filas */
+tbody tr {
+    transition: all 0.15s ease;
+}
+
+tbody tr:hover {
+    background: #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    /* transform: scale(1.002); */
+}
+
+/* Producto */
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: #f1f3f5;
+    padding: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 600;
+}
+
+.product-meta {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* Stock */
+.stock-pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stock-ok {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.stock-low {
+    background: #f8d7da;
+    color: #842029;
+}
+
+/* Precio */
+.price {
+    font-weight: 700;
+}
+
+/* Acciones */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.icon {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.icon:hover {
+    transform: translateY(-2px);
+}
+
+.view:hover {
+    background: #cff4fc;
+}
+
+.edit:hover {
+    background: #fff3cd;
+}
+
+.stock:hover,
+.history:hover {
+    background: #e2e3ff;
+}
+
+.delete:hover {
+    background: #f8d7da;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .filters {
+        justify-content: space-between;
+    }
+
+    .product-cell {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+/* Botón vista */
+.btn-toggle {
+    background: white;
+    border: 1px solid #dee2e6;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-toggle:hover {
+    background: #f1f3f5;
+    transform: translateY(-1px);
+}
+
+/* Grid tarjetas */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* Tarjeta */
+.product-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Imagen */
+.card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: #f1f3f5;
+    padding: 10px;
+}
+
+/* Cuerpo */
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-body h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.card-category {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* Fila precio + stock */
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Acciones */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* Low stock glow */
+.product-card.low-stock {
+    border: 2px solid #dc3545;
+}
+
+.table-card,
+.cards-grid {
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-toggle.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+    box-shadow: 0 6px 18px rgba(13, 110, 253, 0.3);
+}
+
+
+
+/* ===========================
+   DROPDOWN ACCIONES LIMPIO
+=========================== */
+
+.actions {
+    position: relative;
+    display: flex;
+        justify-content: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-actions {
+    background: #1f2933;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    /* transition: background 0.15s ease, transform 0.15s ease; */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-actions:hover {
+    background: #374151;
+    transform: translateY(-1px);
+}
+
+/* Menú flotante */
+.dropdown-menu {
+    
+    position: absolute;
+    top: calc(100% + 6px);
+    /* JUSTO debajo del botón */
+    left: 0;
+    /* alineado con el botón */
+    min-width: 190px;
+    
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    z-index: 999999;
+    
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    isolation: isolate;
+    
+}
+
+/* Menú visible */
+.dropdown-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Items */
+.dropdown-menu li {
+    list-style: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    /* transition: background 0.2s ease; */
+}
+
+.dropdown-menu li:hover {
+    background: #f3f4f6;
+}
+
+/* Peligro */
+.dropdown-menu li.danger {
+    color: #dc2626;
+}
+
+.dropdown-menu li.danger:hover {
+    background: #fee2e2;
+}
+
+/* Animación */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+th.actions-header {
+    text-align: center;
+}
+
+/* ===========================
+   DROPDOWN EN TARJETAS
+=========================== */
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    position: relative;
+}
+
+/* Asegura que la tarjeta no tape el menú */
+.product-card {
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+/* El menú se eleva por encima de otras cards */
+.card-actions .dropdown-menu {
+    z-index: 999999;
+}

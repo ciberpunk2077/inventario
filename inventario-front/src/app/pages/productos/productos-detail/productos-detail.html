@@ -1,0 +1,217 @@
+<p>productos-detail works!</p>
+
+<!-- <div class="detail-container">
+
+    <div *ngIf="loading" class="loading">
+        Cargando producto...
+    </div>
+
+    <div *ngIf="!loading && producto" class="card">
+
+        <h2>{{ producto.nombre }}</h2>
+
+        <div class="info-grid">
+            <div>
+                <label>Categoría</label>
+                <p>{{ producto.categoria_nombre }}</p>
+            </div>
+
+            <div>
+                <label>Marca</label>
+                <p>{{ producto.marca_nombre }}</p>
+            </div>
+
+            <div>
+                <label>Precio</label>
+                <p>${{ producto.precio | number:'1.2-2' }}</p>
+            </div>
+
+            <div>
+                <label>Stock</label>
+                <p [class.low-stock]="producto.stock < 5">
+                    {{ producto.stock }}
+                </p>
+            </div>
+
+            <div>
+                <label>Descripción</label>
+                <p>{{ producto.descripcion }}</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button routerLink="/productos">Volver</button>
+            <button class="edit">Editar</button>
+        </div>
+
+    </div>
+</div> -->
+
+<div class="detail-container">
+
+    <div *ngIf="loading" class="loading">
+        Cargando producto...
+    </div>
+
+    <div *ngIf="!loading && producto" class="product-card">
+
+        <!-- Header -->
+        <div class="header">
+            <h2>{{ producto.nombre }}</h2>
+            <span class="badge" [class.low]="producto.stock < 5">
+                {{ producto.stock < 5 ? 'Stock Bajo' : 'Disponible' }} </span>
+        </div>
+
+        <!-- Cuerpo -->
+        <div class="body">
+
+            <!-- Imagen -->
+            <div class="image-section">
+                <img [src]="producto.imagen || '/assets/no-image.png'" alt="Imagen del producto" />
+            </div>
+
+            <!-- Info -->
+            <div class="info-section">
+
+
+                <!-- <div class="price-box">
+                    <div class="price-item">
+                        <label>Precio de Compra</label>
+                        <span class="buy">
+                            ${{ producto.precio_compra | number:'1.2-2' }}
+                        </span>
+                    </div>
+
+                    <div class="price-item">
+                        <label>Precio de Venta</label>
+                        <span class="sell">
+                            ${{ producto.precio_venta | number:'1.2-2' }}
+                        </span>
+                    </div>
+                </div> -->
+
+                <div class="price-box">
+                    <div class="price-item">
+                        <label>Precio de Compra</label>
+                        <span class="buy">
+                            ${{ producto.precio_compra | number:'1.2-2' }}
+                        </span>
+                    </div>
+
+                    <div class="price-item">
+                        <label>Precio de Venta</label>
+                        <span class="sell">
+                            ${{ producto.precio_venta | number:'1.2-2' }}
+                        </span>
+                    </div>
+
+                    <!-- <div class="price-item">
+                        <label>Margen</label>
+                        <span [ngClass]="getMarginClass()">
+                            {{ getMarginAmount() | number:'1.2-2' }}
+                            ({{ getMarginPercent() | number:'1.0-0' }}%)
+                        </span>
+                    </div> -->
+
+                    <div class="price-item margin-card">
+                        <label>Margen de Ganancia</label>
+
+                        <span [ngClass]="getMarginClass()">
+                            {{ getMarginAmount() | number:'1.2-2' }}
+                            ({{ getMarginPercent() | number:'1.0-0' }}%)
+                        </span>
+
+                        <!-- Barra de progreso -->
+                        <div class="margin-bar">
+                            <div class="margin-fill" [style.width.%]="getMarginBarWidth()" [ngClass]="getMarginClass()">
+                            </div>
+                        </div>
+
+                        <!-- Alertas -->
+                        <small *ngIf="getMarginPercent() < 0" class="alert-loss">
+                            ⚠️ Estás vendiendo con pérdida
+                        </small>
+
+                        <small *ngIf="getMarginPercent() >= 0 && getMarginPercent() < 10" class="alert-low">
+                            ⚠️ Margen muy bajo
+                        </small>
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="grid">
+                    <div>
+                        <label>Categoría</label>
+                        <p>{{ producto.categoria_nombre || 'N/A' }}</p>
+                    </div>
+
+                    <div>
+                        <label>Marca</label>
+                        <p>{{ producto.marca_nombre || 'N/A' }}</p>
+                    </div>
+
+                    <div>
+                        <label>SKU</label>
+                        <p>{{ producto.sku || 'N/A' }}</p>
+                    </div>
+
+                    <div>
+                        <label>Proveedor</label>
+                        <p>{{ producto.proveedor_nombre || 'N/A' }}</p>
+                    </div>
+
+                    <div>
+                        <label>Stock</label>
+                        <!-- <p 
+                        [class.low-stock]="producto.stock < 5">
+                            {{ producto.cantidad_actual }}
+                        </p> -->
+                        <p>
+                            <strong>Stock actual:</strong>
+                            <span [class.text-danger]="producto.cantidad_actual <= producto.stock_minimo"
+                                [class.text-success]="producto.cantidad_actual > producto.stock_minimo">
+                                {{ producto.cantidad_actual }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label>Fecha de alta</label>
+                        <p>{{ producto.fecha_creacion | date:'dd/MM/yyyy' }}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="description">
+            <h3>Descripción</h3>
+            <p>{{ producto.descripcion || 'Sin descripción disponible' }}</p>
+        </div>
+
+        <!-- Acciones -->
+        <div class="actions">
+            <button routerLink="/productos">Volver</button>
+            <button class="edit" (click)="editarProducto(producto.id_producto)">Editar</button>
+            <!-- <button class="btn btn-sm btn-warning me-1" (click)="editarProducto(producto.id_producto)">
+                ✏️
+            </button> -->
+        </div>
+
+
+        <!-- <p>
+            <strong>Stock actual:</strong>
+            <span [class.text-danger]="producto.cantidad_actual <= producto.stock_minimo"
+                [class.text-success]="producto.cantidad_actual > producto.stock_minimo">
+                {{ producto.cantidad_actual }}
+            </span>
+        </p> -->
+
+
+    </div>
+</div>

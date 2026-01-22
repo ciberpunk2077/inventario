@@ -1,0 +1,61 @@
+<h3>📦 Productos</h3>
+
+<button class="btn btn-primary mb-3" routerLink="/productos/nuevo">
+    ➕ Nuevo Producto
+</button>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Marca</th>
+            <th>Stock</th>
+            <th>Precio Venta</th>
+            <th width="160">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let p of productos" [class.table-danger]="stockBajo(p)">
+            <td>
+                <img *ngIf="p.imagen_url" [src]="p.imagen_url" width="50">
+            </td>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.categoria_nombre }}</td>
+            <td>{{ p.marca_nombre }}</td>
+            <td>{{ p.cantidad_actual }}</td>
+            <td>{{ p.precio_venta | currency:'MXN' }}</td>
+            <td class="text-center">
+                <!-- VER -->
+                <button class="btn btn-sm btn-info me-1" (click)="verProducto(p.id_producto)">
+                    👁
+                </button>
+
+                <!-- EDITAR -->
+                <button class="btn btn-sm btn-warning me-1" (click)="editarProducto(p.id_producto)">
+                    ✏️
+                </button>
+
+                <!-- MOVER STOCK -->
+                <button class="btn btn-sm btn-warning" [routerLink]="['/productos', p.id_producto, 'mover-stock']">
+                    🔁 Stock
+                </button>
+
+                <!-- Historial de Movimientos -->
+                <button class="btn btn-sm btn-secondary" [routerLink]="['/productos', p.id_producto, 'movimientos']">
+                    📜 Historial
+                </button>
+
+                <!-- ELIMINAR -->
+                <button class="btn btn-sm btn-danger" (click)="eliminarProducto(p.id_producto)">
+                    🗑
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div *ngIf="loading">Cargando...</div>
+</div>

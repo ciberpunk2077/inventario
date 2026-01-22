@@ -1,15 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-login',
-//   standalone: true,
-//   imports: [],
-//   templateUrl: './login.html',
-//   styleUrl: './login.css',
-// })
-// export class LoginComponent {
-
-// }
 
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -36,19 +24,25 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.error = '';
+  this.error = '';
 
-    this.authService.login({
-      username: this.username,
-      password: this.password
-    }).subscribe({
-      next: () => {
-        this.router.navigate(['/movimientos']);
-      },
-      error: () => {
-        this.error = 'Usuario o contraseña incorrectos';
-      }
-    });
-  }
+  this.authService.login({
+    username: this.username,
+    password: this.password
+  }).subscribe({
+    next: () => {
+      this.authService.loadPermissions(); // ✅ AQUÍ
+      // this.router.navigate(['/movimientos']);
+      this.router.navigate(['/dashboard']);
+    },
+    error: () => {
+      this.error = 'Usuario o contraseña incorrectos';
+    }
+  });
+}
+
+
+
+  
 }
 

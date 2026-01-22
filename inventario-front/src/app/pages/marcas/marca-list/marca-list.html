@@ -1,0 +1,50 @@
+<p>marca-list works!</p>
+
+<h3>🏷️ Marcas</h3>
+
+<a routerLink="/marcas/nueva" class="btn btn-primary mb-3">
+    ➕ Nueva marca
+</a>
+
+<div *ngIf="cargando" class="alert alert-info">
+    Cargando marcas...
+</div>
+
+<table class="table table-bordered table-hover" *ngIf="!cargando">
+    <thead class="table-dark">
+        <tr>
+            <th>Logo</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th style="width: 160px">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let marca of marcas">
+            <td>
+                <img *ngIf="marca.logo_url" [src]="marca.logo_url" alt="logo" width="50" />
+            </td>
+
+            <td>{{ marca.nombre }}</td>
+
+            <td>{{ marca.fecha_creacion | date:'shortDate' }}</td>
+
+            <td>
+                <a [routerLink]="['/marcas/editar', marca.id_marca]" class="btn btn-sm btn-warning me-2">
+                    ✏️
+                </a>
+
+                <button class="btn btn-sm btn-danger" (click)="eliminar(marca.id_marca)">
+                    🗑️
+                </button>
+            </td>
+        </tr>
+
+        <tr *ngIf="marcas.length === 0">
+            <td colspan="4" class="text-center text-muted">
+                No hay marcas registradas
+            </td>
+        </tr>
+    </tbody>
+</table>

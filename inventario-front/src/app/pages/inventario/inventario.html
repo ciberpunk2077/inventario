@@ -1,0 +1,59 @@
+<div class="container mt-4">
+
+    <h3>📦 Inventario</h3>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Producto</th>
+                <th class="text-end">Stock</th>
+                <th class="text-end">Mínimo</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody *ngIf="!loading">
+            <tr *ngFor="let i of inventarios" [class.table-danger]="stockBajo(i)">
+
+                <td>{{ i.producto.nombre }}</td>
+
+                <td class="text-end fw-bold">
+                    {{ i.cantidad_actual }}
+                </td>
+
+                <td class="text-end">
+                    {{ i.producto.stock_minimo }}
+                </td>
+
+                <td>
+                    <span *ngIf="stockBajo(i)" class="badge bg-danger">
+                        STOCK BAJO
+                    </span>
+                    <span *ngIf="!stockBajo(i)" class="badge bg-success">
+                        OK
+                    </span>
+                </td>
+
+                <td>
+                    <a [routerLink]="['/kardex', i.producto.id_producto]" class="btn btn-sm btn-outline-primary">
+                        Kardex
+                    </a>
+                </td>
+
+            </tr>
+
+            <tr *ngIf="inventarios.length === 0">
+                <td colspan="5" class="text-center text-muted">
+                    No hay inventario
+                </td>
+            </tr>
+        </tbody>
+
+        <tbody *ngIf="loading">
+            <tr>
+                <td colspan="5" class="text-center">Cargando…</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

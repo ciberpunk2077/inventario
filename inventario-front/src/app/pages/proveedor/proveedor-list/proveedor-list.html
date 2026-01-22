@@ -1,0 +1,45 @@
+<p>proveedor-list works!</p>
+
+<h3>🚚 Proveedores</h3>
+
+<button class="btn btn-primary mb-3" routerLink="/proveedores/nueva">
+    ➕ Nuevo proveedor
+</button>
+
+<div *ngIf="loading">Cargando proveedores...</div>
+
+<table class="table table-bordered table-hover" *ngIf="!loading">
+    <thead class="table-light">
+        <tr>
+            <th width="80">Imagen</th>
+            <th>Nombre</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th width="150">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let p of proveedores">
+            <td class="text-center">
+                <img *ngIf="p.imagen_url" [src]="p.imagen_url" width="50" height="50" class="rounded border" />
+                <span *ngIf="!p.imagen_url">—</span>
+            </td>
+
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.contacto || '—' }}</td>
+            <td>{{ p.telefono || '—' }}</td>
+            <td>{{ p.email || '—' }}</td>
+
+            <td>
+                <button class="btn btn-sm btn-warning me-1" (click)="editar(p.id_proveedor)">
+                    ✏️
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(p.id_proveedor)">
+                    🗑️
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

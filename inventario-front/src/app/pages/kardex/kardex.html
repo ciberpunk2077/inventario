@@ -1,0 +1,42 @@
+<div class="container mt-4">
+
+    <h3 class="mb-3">📑 Kardex del Producto</h3>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Antes</th>
+                <th>Después</th>
+                <th>Motivo</th>
+            </tr>
+        </thead>
+
+        <tbody *ngIf="!loading">
+            <tr *ngFor="let m of movimientos">
+                <td>{{ m.fecha }}</td>
+                <td [ngClass]="claseTipo(m.tipo)">{{ m.tipo }}</td>
+                <td>{{ m.cantidad }}</td>
+                <td>{{ m.cantidad_anterior }}</td>
+                <td>{{ m.cantidad_nueva }}</td>
+                <td>{{ m.motivo }}</td>
+            </tr>
+
+            <tr *ngIf="movimientos.length === 0">
+                <td colspan="6" class="text-center text-muted">
+                    Sin movimientos
+                </td>
+            </tr>
+        </tbody>
+
+        <tbody *ngIf="loading">
+            <tr>
+                <td colspan="6" class="text-center">
+                    Cargando...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

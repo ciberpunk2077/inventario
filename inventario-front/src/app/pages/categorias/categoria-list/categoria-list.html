@@ -1,0 +1,67 @@
+<!-- <p>categoria-list works!</p>
+
+<h3>📂 Categorías</h3>
+
+<button class="btn btn-primary mb-3" routerLink="/categorias/nueva">
+    ➕ Nueva categoría
+</button>
+
+<div *ngIf="loading">Cargando...</div>
+
+<table class="table table-bordered table-hover" *ngIf="!loading">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th width="150">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of categorias">
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.descripcion }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-1" (click)="editar(c.id_categoria)">
+                    ✏️
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(c.id_categoria)">
+                    🗑️
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table> -->
+
+<p>categoria-list works!</p>
+
+<h3>📂 Categorías</h3>
+
+<button class="btn btn-primary mb-3" routerLink="/categorias/nueva">
+    ➕ Nueva categoría
+</button>
+
+<div *ngIf="loading">Cargando...</div>
+
+<table class="table table-bordered table-hover" *ngIf="!loading">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th width="150">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of categorias">
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.descripcion }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-1" (click)="editar(c.id_categoria)">
+                    ✏️
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(c.id_categoria)">
+                    🗑️
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,4 +1,4 @@
-<h2>Movimientos</h2>
+<!-- <h2>Movimientos</h2>
 <button (click)="crearMovimiento()">
     Crear movimiento de prueba
 </button>
@@ -28,4 +28,70 @@
 
 <p *ngIf="!loading && !movimientos.length">
     No hay movimientos registrados
-</p>
+</p> -->
+
+<div class="container mt-4">
+
+    <h3 class="mb-3">📦 Movimientos de Inventario</h3>
+
+    <!-- Filtro -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select class="form-select" [(ngModel)]="filtroTipo" (change)="cargarMovimientos()">
+                <option value="">Todos</option>
+                <option value="ENTRADA">Entradas</option>
+                <option value="SALIDA">Salidas</option>
+                <option value="AJUSTE">Ajustes</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th class="text-end">Cantidad</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+
+            <tbody *ngIf="!loading">
+                <tr *ngFor="let m of movimientos; trackBy: trackById">
+                    <td>{{ m.fecha }}</td>
+                    <td>{{ m.producto }}</td>
+                    <td [ngClass]="claseTipo(m.tipo)">
+                        {{ m.tipo }}
+                    </td>
+                    <td class="text-end" [ngClass]="{'text-success': m.cantidad > 0,
+                        'text-danger': m.cantidad < 0 }">
+                        {{ m.cantidad }}
+                    </td>
+                    <td>{{ m.motivo }}</td>
+                </tr>
+
+                <tr *ngIf="movimientos.length === 0">
+                    <td colspan="5" class="text-center text-muted">
+                        No hay movimientos
+                    </td>
+                </tr>
+            </tbody>
+
+            <tbody *ngIf="loading">
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <span class="spinner-border spinner-border-sm"></span>
+                        Cargando...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<button class="btn btn-success" (click)="descargarExcel()">
+    📊 Descargar Excel
+</button>

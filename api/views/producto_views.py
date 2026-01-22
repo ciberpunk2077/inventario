@@ -10,11 +10,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from api.utils.responses import success, error
 
+from api.models import MovimientoInventario
+from api.serializers.movimiento_serializers import MovimientoInventarioReadSerializer
+from api.permissions import PuedeVerMovimientos
+from django.core.cache import cache
+
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = Producto.objects.select_related('categoria', 'proveedor', 'marca','inventario')
+    queryset = Producto.objects.filter(activo=True).select_related('categoria', 'proveedor', 'marca','inventario')
+    # queryset = Producto.objects.filter(activo=True).select_related('categoria', 'proveedor', 'marca').prefetch_related('inventario')
     serializer_class = ProductoSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
@@ -22,29 +28,20 @@ class ProductoViewSet(viewsets.ModelViewSet):
         producto = serializer.save()
         Inventario.objects.get_or_create(producto=producto)
   
-    def update(self, request, *args, **kwargs):
-        partial = True  # siempre edición parcial
-        instance = self.get_object()
-
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-
-        producto = serializer.save()
-
-        return Response(serializer.data)
         
     @action(detail=True, methods=['post'], parser_classes=[JSONParser])
     def mover_stock(self, request, pk=None):
         producto = self.get_object()
         cantidad = int(request.data.get("cantidad", 0))
         tipo = request.data.get("tipo")
-        proveedor_id = request.data.get("proveedor")
+        proveedor_id = request.data.get("proveedor_id")
         motivo = request.data.get("motivo", "AJUSTE")
         
         if tipo not in ("ENTRADA", "SALIDA"):
             return error("Tipo de movimiento inválido")
+        
         if cantidad <= 0:
-            return error("Tipo de movimiento inválido")
+            return error("La cantidad debe ser mayor a cero")
 
         proveedor = (
             get_object_or_404(Proveedor, id_proveedor=proveedor_id)
@@ -57,8 +54,6 @@ class ProductoViewSet(viewsets.ModelViewSet):
         )
 
         inventario, _ = Inventario.objects.get_or_create(producto=producto)
-
-
                 
         try:
             movimiento = inventario.mover(
@@ -70,6 +65,8 @@ class ProductoViewSet(viewsets.ModelViewSet):
             )
         except ValueError as e:
             return error(str(e))
+        
+        cache.delete("dashboard_resumen")
             
 
         return success(
@@ -82,7 +79,32 @@ class ProductoViewSet(viewsets.ModelViewSet):
                 "despues": movimiento.cantidad_nueva,
                 "motivo": movimiento.motivo,
                 "fecha": movimiento.fecha_movimiento,
-                "usuario": movimiento.usuario_responsable
+                "usuario": movimiento.usuario_responsable.username if movimiento.usuario_responsable else None
+                # "usuario": movimiento.usuario_responsable
             },
          status=status.HTTP_201_CREATED)
+    
+
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path='movimientos',
+        permission_classes=[IsAuthenticated, PuedeVerMovimientos]
+    )
+    def movimientos(self, request, pk=None):
+        producto = self.get_object()
+
+        movimientos = MovimientoInventario.objects.filter(
+            producto=producto
+        ).order_by('-fecha_movimiento')
+
+        serializer = MovimientoInventarioReadSerializer(movimientos, many=True,context={'request': request})
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        producto = self.get_object()
+        producto.activo = False
+        producto.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
             

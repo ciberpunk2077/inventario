@@ -1,0 +1,54 @@
+<p>proveedor-form works!</p>
+
+<h3>
+    {{ editando ? '✏️ Editar Proveedor' : '➕ Nuevo Proveedor' }}
+</h3>
+
+<form (ngSubmit)="guardar()" enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label class="form-label">Nombre *</label>
+        <input type="text" class="form-control" [(ngModel)]="proveedor.nombre" name="nombre" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Contacto</label>
+        <input type="text" class="form-control" [(ngModel)]="proveedor.contacto" name="contacto" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Teléfono</label>
+        <input type="text" class="form-control" [(ngModel)]="proveedor.telefono" name="telefono" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" [(ngModel)]="proveedor.email" name="email" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Dirección</label>
+        <textarea class="form-control" [(ngModel)]="proveedor.direccion" name="direccion"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Imagen</label>
+        <input type="file" class="form-control" (change)="onFileChange($event)" />
+    </div>
+
+    <div *ngIf="imagenPreview" class="mb-3">
+        <img [src]="imagenPreview" width="120" class="img-thumbnail" />
+    </div>
+
+    <div *ngIf="errorMsg" class="alert alert-danger">
+        {{ errorMsg }}
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        {{ editando ? '💾 Guardar cambios' : '✅ Crear proveedor' }}
+    </button>
+
+    <button type="button" class="btn btn-secondary ms-2" (click)="cancelar()">
+        Cancelar
+    </button>
+</form>

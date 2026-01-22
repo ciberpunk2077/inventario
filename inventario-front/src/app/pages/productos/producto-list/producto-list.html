@@ -1,0 +1,206 @@
+<div class="products-container" (click)="closeMenu()">
+
+    <!-- Header -->
+    <div class="products-header">
+        <div>
+            <h3>📦 Productos</h3>
+            <span class="subtitle">Panel de gestión de inventario</span>
+        </div>
+
+        <button class="btn-new" routerLink="/productos/nuevo">
+            ➕ Nuevo Producto
+        </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <input type="text" placeholder="🔍 Buscar producto..." [(ngModel)]="searchText"
+            (ngModelChange)="filtrarProductos()" class="search-input">
+
+        <button class="btn-toggle" [class.active]="viewMode ===  ViewMode.CARDS" (click)="toggleView()">
+            {{ viewMode === ViewMode.TABLE ? '🗂 Vista tarjetas' : '📋 Vista tabla' }}
+        </button>
+
+
+
+        <div class="filters">
+
+            <!-- <select class="filter">
+                <option>Todas las marcas</option>
+            </select> -->
+            <select class="filter" [(ngModel)]="selectedCategory" (ngModelChange)="filtrarProductos()">
+
+                <option value="">Todas las categorías</option>
+
+                <option *ngFor="let c of categorias" [value]="c">
+                    {{ c }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="loading" class="loading">
+        Cargando productos...
+    </div>
+
+    <!-- Tabla -->
+    <!-- <div *ngIf="!loading" class="table-card"> -->
+    <div *ngIf="viewMode === ViewMode.TABLE" class="table-card">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Marca</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th class="actions">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <ng-container *ngFor="let p of productosFiltrados; trackBy: trackById">
+
+                    <!-- FILA PRINCIPAL -->
+                    <tr [class.low-stock]="stockBajo(p)">
+
+                        <td class="product-cell">
+                            <img [src]="p.imagen_url || '/assets/no-image.png'" class="product-thumb">
+
+                            <div class="product-info">
+                                <span class="product-name">{{ p.nombre }}</span>
+                                <span class="product-meta">
+                                    {{ p.categoria_nombre || 'Sin categoría' }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>{{ p.marca_nombre || '—' }}</td>
+
+                        <td>
+                            <span class="stock-pill" [class.stock-low]="stockBajo(p)" [class.stock-ok]="!stockBajo(p)">
+                                {{ p.cantidad_actual }}
+                            </span>
+                        </td>
+
+                        <td class="price">
+                            {{ p.precio_venta | currency:'MXN' }}
+                        </td>
+
+
+                        <!-- FILA DESPLEGABLE -->
+                        <td class="actions">
+                            <div class="dropdown">
+
+                                <button class="btn-actions"
+                                    (click)="toggleMenu(p.id_producto); $event.stopPropagation()">
+                                    ⚙ Acciones
+                                </button>
+
+                                <ul class="dropdown-menu" [class.show]="openMenuId === p.id_producto">
+
+                                    <li (click)="verProducto(p.id_producto); closeMenu()">
+                                        👁 <span>Ver</span>
+                                    </li>
+
+                                    <li (click)="editarProducto(p.id_producto); closeMenu()">
+                                        ✏️ <span>Editar</span>
+                                    </li>
+
+                                    <li [routerLink]="['/productos', p.id_producto, 'mover-stock']"
+                                        (click)="closeMenu()">
+                                        🔁 <span>Mover stock</span>
+                                    </li>
+
+                                    <li [routerLink]="['/productos', p.id_producto, 'movimientos']"
+                                        (click)="closeMenu()">
+                                        📜 <span>Historial</span>
+                                    </li>
+
+                                    <li class="danger" (click)="eliminarProducto(p.id_producto); closeMenu()">
+                                        🗑 <span>Eliminar</span>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                        </td>
+
+
+                    </tr>
+
+                </ng-container>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="viewMode === ViewMode.CARDS" class="cards-grid">
+
+        <div class="product-card" *ngFor="let p of productosFiltrados; trackBy: trackById"
+            [class.low-stock]="stockBajo(p)">
+
+            <img [src]="p.imagen_url || '/assets/no-image.png'" class="card-image">
+
+            <div class="card-body">
+                <h4>{{ p.nombre }}</h4>
+
+                <span class="card-category">
+                    {{ p.categoria_nombre || 'Sin categoría' }}
+                </span>
+
+                <div class="card-row">
+                    <span class="price">
+                        {{ p.precio_venta | currency:'MXN' }}
+                    </span>
+
+                    <span class="stock-pill" [class.stock-low]="stockBajo(p)" [class.stock-ok]="!stockBajo(p)">
+                        Stock: {{ p.cantidad_actual }}
+                    </span>
+                </div>
+
+                <!-- FILA DESPLEGABLE -->
+                <td class="card-actions">
+                    <div class="dropdown">
+
+                        <button class="btn-actions" (click)="toggleMenu(p.id_producto); $event.stopPropagation()">
+                            ⚙ Acciones
+                        </button>
+
+                        <ul class="dropdown-menu" [class.show]="openMenuId === p.id_producto">
+
+                            <li (click)="verProducto(p.id_producto); closeMenu()">
+                                👁 <span>Ver</span>
+                            </li>
+
+                            <li (click)="editarProducto(p.id_producto); closeMenu()">
+                                ✏️ <span>Editar</span>
+                            </li>
+
+                            <li [routerLink]="['/productos', p.id_producto, 'mover-stock']" (click)="closeMenu()">
+                                🔁 <span>Mover stock</span>
+                            </li>
+
+                            <li [routerLink]="['/productos', p.id_producto, 'movimientos']" (click)="closeMenu()">
+                                📜 <span>Historial</span>
+                            </li>
+
+                            <li class="danger" (click)="eliminarProducto(p.id_producto); closeMenu()">
+                                🗑 <span>Eliminar</span>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </td>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

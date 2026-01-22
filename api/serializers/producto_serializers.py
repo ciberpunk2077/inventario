@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models import Producto
+from api.models import Inventario
 
 
 class ProductoSerializer(serializers.ModelSerializer):
@@ -10,13 +11,23 @@ class ProductoSerializer(serializers.ModelSerializer):
     cantidad_actual = serializers.SerializerMethodField()
 
     def get_cantidad_actual(self, obj):
-        if hasattr(obj, 'inventario'):
+        try:
             return obj.inventario.cantidad_actual
-        return 0
+        except Inventario.DoesNotExist:
+            return 0
+        # if hasattr(obj, 'inventario'):
+        #     return obj.inventario.cantidad_actual
+        # return 0
 
     class Meta:
         model = Producto
         fields = '__all__'
+        read_only_fields = [
+        'fecha_creacion',
+        'fecha_actualizacion',
+        'activo',
+        # 'cantidad_actual'
+    ]
 
     def get_imagen_url(self, obj):
         request = self.context.get('request')

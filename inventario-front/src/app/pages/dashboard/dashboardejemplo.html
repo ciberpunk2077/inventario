@@ -1,0 +1,205 @@
+<!-- <div class="container-fluid py-4"> -->
+
+<!-- <h2 class="mb-1">Dashboard de Inventario</h2>
+    <p class="text-muted mb-4">
+        Resumen general del estado actual del inventario
+    </p> -->
+
+<!-- CARDS -->
+<!-- <div class="dashboard-cards mb-4">
+
+        <div class="dashboard-card" *ngFor="let c of cards">
+            <h6>{{ c.titulo }}</h6>
+
+            <div class="dashboard-value" [ngClass]="{
+          'dashboard-total': c.titulo === 'Total productos',
+          'dashboard-warning': c.titulo === 'Stock bajo',
+          'dashboard-success': c.titulo === 'Valor inventario'
+        }">
+                {{ c.valor }}
+            </div>
+
+            <small class="text-muted">Actual</small>
+        </div>
+
+    </div> -->
+
+<!-- ALERTAS -->
+<!-- <div class="dashboard-card mb-4">
+        <h5>⚠️ Alertas de Stock</h5>
+
+        <div *ngIf="alertas.length === 0" class="text-muted">
+            No hay productos con stock bajo 🎉
+        </div>
+
+        <ul class="list-group" *ngIf="alertas.length > 0">
+
+            <li class="list-group-item d-flex justify-content-between align-items-center alerta-item"
+                *ngFor="let a of alertas" [class.alerta-critica]="a.critico" (click)="irProducto(a.producto_id)">
+                {{ a.producto }}
+                <span class="badge bg-danger">{{ a.stock_actual }}</span>
+            </li>
+
+        </ul>
+    </div>
+
+    <div class="dashboard-card mb-4">
+        <h5>📈 Movimientos últimos 7 días</h5>
+
+        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" chartType="line">
+        </canvas>
+    </div> -->
+
+<!-- ACCIONES -->
+<!-- <div class="d-flex gap-2">
+        <button class="btn btn-primary" routerLink="/productos">
+            ➕ Registrar movimiento
+        </button>
+
+        <button class="btn btn-outline-secondary" routerLink="/productos">
+            📦 Ver inventario
+        </button>
+
+        <button class="btn btn-outline-success" (click)="descargarExcel()">
+            📊 Exportar Excel
+        </button>
+    </div> -->
+
+
+<!-- </div> -->
+
+<div class="container-fluid py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="mb-0">Dashboard de Inventario</h3>
+            <small class="text-muted">Resumen general del estado actual del inventario</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" routerLink="/productos">
+                <i class="fa-solid fa-boxes-stacked me-1"></i> Inventario
+            </button>
+
+            <button class="btn btn-outline-success btn-sm" (click)="descargarExcel()">
+                <i class="fa-solid fa-file-excel me-1"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let card of cards">
+
+            <div class="card kpi-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="kpi-title">{{ card.titulo }}</div>
+                        <!-- <div class="kpi-value">{{ card.valor }}</div> -->
+                        <!-- Valor normal -->
+                        <div class="kpi-value" *ngIf="card.valor !== undefined">
+                            {{ card.valor }}
+                        </div>
+
+                        <!-- Valor inventario -->
+                        <ng-container *ngIf="card.valorInventario as v">
+                            <div class="fw-bold text-danger">
+                                🔴 Invertido: {{ v.invertido | currency:'MXN' }}
+                            </div>
+
+                            <div class="fw-bold text-success">
+                                🟢 Total ganado: {{ v.ganado | currency:'MXN' }}
+                            </div>
+                        </ng-container>
+
+
+                    </div>
+
+                    <!-- Icono dinámico -->
+                    <div class="fs-3" [ngClass]="{
+                 'text-primary': card.titulo === 'Total productos',
+                 'text-warning': card.titulo === 'Stock bajo',
+                 'text-success': card.titulo === 'Valor inventario',
+                 'text-info': card.titulo === 'Stock total'
+               }">
+                        <i class="fa-solid" [ngClass]="{
+                 'fa-boxes-stacked': card.titulo === 'Total productos',
+                 'fa-triangle-exclamation': card.titulo === 'Stock bajo',
+                 'fa-dollar-sign': card.titulo === 'Valor inventario',
+                 'fa-layer-group': card.titulo === 'Stock total'
+               }"></i>
+                    </div>
+                </div>
+
+                <!-- Badge de estado -->
+                <span class="badge mt-2 align-self-start" [ngClass]="{
+                'bg-primary': card.titulo === 'Total productos',
+                'bg-warning text-dark': card.titulo === 'Stock bajo',
+                'bg-success': card.titulo === 'Valor inventario',
+                'bg-info text-dark': card.titulo === 'Stock total'
+              }">
+                    Actualizado
+                </span>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h5 class="mb-0">
+                <i class="fa-solid fa-chart-line me-1 text-primary"></i>
+                Movimientos últimos 7 días
+            </h5>
+
+            <span class="badge bg-light text-dark">
+                Entradas vs Salidas
+            </span>
+        </div>
+
+        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" chartType="line">
+        </canvas>
+    </div>
+
+    <!-- Alerts -->
+    <div *ngIf="alertas.length">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">
+                <i class="fa-solid fa-triangle-exclamation text-danger me-1"></i>
+                Stock Bajo
+            </h5>
+
+            <span class="badge bg-danger">
+                {{ alertas.length }} alertas
+            </span>
+        </div>
+
+        <div *ngFor="let alerta of alertas"
+            class="stock-alert p-2 mb-2 d-flex justify-content-between align-items-center">
+
+            <div>
+                <strong>{{ alerta.producto }}</strong>
+                <div class="small text-muted">
+                    Stock actual: {{ alerta.stock_actual }}
+                </div>
+            </div>
+
+            <button class="btn btn-sm btn-outline-primary" (click)="irProducto(alerta.producto_id)">
+                <i class="fa-solid fa-eye me-1"></i>
+                Ver
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!alertas.length" class="text-center text-muted py-4">
+        <i class="fa-solid fa-circle-check fs-2 mb-2 text-success"></i>
+        <div>No hay productos con stock bajo</div>
+    </div>
+
+</div>

@@ -1,0 +1,29 @@
+<p>compra-detail works!</p>
+
+<div class="card mt-3">
+    <div class="card-body">
+
+        <h5>Resumen de compra</h5>
+
+        <p><strong>Proveedor:</strong> {{ compra.proveedor.nombre }}</p>
+        <p><strong>Estado:</strong>
+            <span class="badge" [ngClass]="{
+          'bg-warning': compra.estado === 'PENDIENTE',
+          'bg-success': compra.estado === 'COMPLETADA',
+          'bg-danger': compra.estado === 'CANCELADA'
+        }">
+                {{ compra.estado }}
+            </span>
+        </p>
+
+        <p><strong>Total:</strong> ${{ compra.total }}</p>
+
+        <!-- 🔥 BOTÓN EMPRESARIAL -->
+        <button class="btn btn-success" (click)="completarCompra()"
+            [disabled]="compra.estado !== 'PENDIENTE' || cargando">
+            <i class="fas fa-check"></i>
+            Completar compra
+        </button>
+
+    </div>
+</div>

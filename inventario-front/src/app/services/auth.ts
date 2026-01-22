@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,11 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
 
   private apiUrl = 'http://localhost:8000/api';
+
+  private permissionsSubject = new BehaviorSubject<string[]>([]);
+  permissions$ = this.permissionsSubject.asObservable();
+
+  isSuperUser = false;
 
   constructor(private http: HttpClient) {}
 
@@ -32,4 +37,28 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  
+
+  
+
+  loadPermissions() {
+    this.http.get<any>(`${this.apiUrl}/usuarios/permisos/`)
+      .subscribe(res => {
+        this.permissionsSubject.next(res.permissions);
+        this.isSuperUser = res.is_superuser;
+      });
+  }
+
+  hasPermission(permission: string): boolean {
+    if (this.isSuperUser) return true;
+    return this.permissionsSubject.value.includes(permission);
+  }
+
+  hasAnyPermission(perms: string[]): boolean {
+    if (this.isSuperUser) return true;
+    return perms.some(p => this.permissionsSubject.value.includes(p));
+  }
+
+
 }

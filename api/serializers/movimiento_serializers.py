@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from api.models import MovimientoInventario, Producto, Proveedor
+# from api.serializers import ProveedorSerializer
+from api.serializers.proveedor_serializers import ProveedorSerializer
+
 
 class MovimientoInventarioSerializer(serializers.ModelSerializer):
     producto_id = serializers.PrimaryKeyRelatedField(
@@ -12,24 +15,6 @@ class MovimientoInventarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MovimientoInventario
-        # fields = [
-        #     'id_movimiento',
-        #     'producto',
-        #     'tipo_movimiento',
-        #     'cantidad',
-        #     'cantidad_anterior',
-        #     'cantidad_nueva',
-        #     'motivo',
-        #     'proveedor',
-        #     'fecha_movimiento',
-        #     'observaciones',
-        #     'usuario_responsable',
-        # ]
-        # read_only_fields = [
-        #     'id_movimiento',
-        #     'fecha_movimiento',
-        #     'usuario_responsable',
-        # ]
         fields = [
             'producto_id', 'tipo', 'cantidad', 'motivo',
             'observaciones', 'proveedor_id'
@@ -39,10 +24,9 @@ class MovimientoInventarioSerializer(serializers.ModelSerializer):
 class MovimientoInventarioReadSerializer(serializers.ModelSerializer):
     producto = serializers.CharField(source='producto.nombre', read_only=True)
     tipo = serializers.CharField(source='tipo_movimiento')
-    fecha = serializers.DateTimeField(
-        source='fecha_movimiento',
-        format="%Y-%m-%d %H:%M"
-    )
+    proveedor = serializers.SerializerMethodField()
+    usuario = serializers.SerializerMethodField()
+    fecha = serializers.DateTimeField(source='fecha_movimiento')
 
     class Meta:
         model = MovimientoInventario
@@ -52,6 +36,19 @@ class MovimientoInventarioReadSerializer(serializers.ModelSerializer):
             'tipo',
             'cantidad',
             'motivo',
-            'fecha'
+            'proveedor',
+            'usuario',
+            'fecha',
         ]
+
+    def get_proveedor(self, obj):
+        if obj.proveedor:
+            return ProveedorSerializer(
+                obj.proveedor,
+                context=self.context
+            ).data
+        return None
+
+    def get_usuario(self, obj):
+        return obj.usuario_responsable.username if obj.usuario_responsable else None
 

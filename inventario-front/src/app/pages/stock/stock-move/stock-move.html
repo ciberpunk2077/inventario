@@ -1,0 +1,66 @@
+<div class="stock-move-container">
+
+    <!-- Header -->
+    <div class="header">
+        <h3>🔄 Movimiento de Stock</h3>
+        <button class="btn-back" (click)="cancelar()">
+            ← Volver
+        </button>
+    </div>
+
+    <!-- Producto Card -->
+    <div *ngIf="producto" class="product-card">
+        <div class="product-info">
+            <h2>{{ producto.nombre }}</h2>
+            <p>
+                <strong>Stock actual:</strong>
+                <span [class.stock-low]="producto.cantidad_actual <= producto.stock_minimo"
+                    [class.stock-ok]="producto.cantidad_actual > producto.stock_minimo">
+                    {{ producto.cantidad_actual }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Formulario Card -->
+    <div class="form-card">
+        <form (ngSubmit)="guardar()">
+
+            <div class="form-group">
+                <label>Tipo de movimiento</label>
+                <select [(ngModel)]="form.tipo" name="tipo" required>
+                    <option value="" disabled selected>Selecciona una opción</option>
+                    <option value="ENTRADA">Entrada</option>
+                    <option value="SALIDA">Salida</option>
+                    <option value="SALIDA">Ajuste</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Cantidad</label>
+                <input type="number" [(ngModel)]="form.cantidad" name="cantidad" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Motivo</label>
+                <input type="text" [(ngModel)]="form.motivo" name="motivo"
+                    placeholder="Ej. Ajuste de inventario, compra, venta..." required>
+            </div>
+
+            <div *ngIf="errorMsg" class="error-box">
+                {{ errorMsg }}
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn-primary">
+                    ✔ Aplicar Movimiento
+                </button>
+                <button type="button" class="btn-secondary" (click)="cancelar()">
+                    Cancelar
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>

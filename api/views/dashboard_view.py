@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from api.models import Inventario
+from django.db.models import F
 
 from api.services.dashboard_service import DashboardService
 from api.serializers.dashboard_serializers import DashboardResumenSerializer
